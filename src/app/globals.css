@@ -168,6 +168,30 @@
   --sidebar-ring: oklch(0.58 0.21 28);
 }
 
+/* ── Site container — content is 1280px, centred (80px auto-margin each side at 1440px) ── */
+@utility container {
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: 1rem;
+
+  @media (width >= 640px) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (width >= 768px) {
+    padding-inline: 2rem;
+  }
+
+  @media (width >= 1024px) {
+    padding-inline: 2.5rem;
+  }
+
+  @media (width >= 1280px) {
+    max-width: 1280px;
+    padding-inline: 0;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -223,7 +247,39 @@
     font-weight: 400;
   }
 
-  /* ── Gradient utilities ── */
+  /* ── Skeleton shimmer ── */
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+.animate-shimmer-dark {
+  background: linear-gradient(90deg, #1c1c1c 25%, #2e2e2e 50%, #1c1c1c 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Hide scrollbar utility ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── Marquee animation ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 24s linear infinite;
+  will-change: transform;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ── Gradient utilities ── */
   .bg-gradient-orange-radial {
     background: var(--gradient-orange-radial);
   }
@@ -247,6 +303,12 @@
   }
   .text-gradient-linear {
     background: var(--gradient-warm-orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-orange-dark {
+    background: linear-gradient(to right, #ff9a00 0%, #f03900 40%, #950000 75%, #201d1d 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
