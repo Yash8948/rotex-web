@@ -202,6 +202,13 @@
   html {
     @apply font-montserrat;
   }
+  button,
+  [role="button"],
+  a,
+  label[for],
+  select {
+    @apply cursor-pointer;
+  }
 }
 
 /* ── Typography utility classes ── */

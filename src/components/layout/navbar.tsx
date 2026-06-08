@@ -92,13 +92,13 @@ function NavDropdownItem({ item }: { item: NavItem }) {
       onMouseLeave={() => item.hasDropdown && setOpen(false)}
     >
       <Link href={item.href} className="flex items-center gap-0.5 group">
-        <span className="text-stone-300 text-sm font-medium font-montserrat whitespace-nowrap group-hover:text-white transition-colors duration-150">
+        <span className="text-white/80 text-sm font-medium font-montserrat whitespace-nowrap group-hover:text-white transition-colors duration-150">
           {item.label}
         </span>
         {item.hasDropdown && (
           <IoChevronDownOutline
             size={14}
-            className="text-stone-300 group-hover:text-white transition-colors duration-150 shrink-0"
+            className="text-white/80 group-hover:text-white transition-colors duration-150 shrink-0"
           />
         )}
       </Link>
@@ -112,7 +112,7 @@ function NavDropdownItem({ item }: { item: NavItem }) {
             <Link
               key={sub.href}
               href={sub.href}
-              className="block px-4 py-2.5 text-sm font-medium font-montserrat text-stone-300 hover:text-white hover:bg-white/5 transition-colors duration-150"
+              className="block px-4 py-2.5 text-sm font-medium font-montserrat text-white/75 hover:text-white hover:bg-white/5 transition-colors duration-150"
               onClick={() => setOpen(false)}
             >
               {sub.label}
@@ -206,7 +206,7 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-6 shrink-0">
               <button
                 onClick={() => setSearchOpen((v) => !v)}
-                className="focus:outline-none text-stone-300 hover:text-white transition-colors duration-150"
+                className="focus:outline-none text-white/80 hover:text-white transition-colors duration-150"
                 aria-label="Search"
               >
                 <IoSearchOutline size={22} />
@@ -218,7 +218,7 @@ export function Navbar() {
             <Sheet>
               <SheetTrigger
                 render={
-                  <button className="lg:hidden text-stone-300 hover:text-white transition-colors" />
+                  <button className="lg:hidden text-white/80 hover:text-white transition-colors" />
                 }
               >
                 <Menu className="h-5 w-5" />
@@ -236,11 +236,11 @@ export function Navbar() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="flex items-center justify-between px-2 py-3 text-sm font-medium font-montserrat text-stone-300 hover:text-white hover:bg-white/5 rounded-md transition-colors"
+                      className="flex items-center justify-between px-2 py-3 text-sm font-medium font-montserrat text-white/75 hover:text-white hover:bg-white/5 rounded-md transition-colors"
                     >
                       {item.label}
                       {item.hasDropdown && (
-                        <IoChevronDownOutline size={14} className="text-stone-300" />
+                        <IoChevronDownOutline size={14} className="text-white/60" />
                       )}
                     </Link>
                   ))}
