@@ -1,63 +1,42 @@
-"use client";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import ctaBg from "@/assets/cta_bg.jpg";
 
-export function CTASection() {
+export function CtaSection() {
   return (
-    <section className="py-24 bg-neutral-100">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="relative max-w-4xl mx-auto text-center rounded-3xl overflow-hidden"
-          style={{ background: "var(--gradient-bright-to-dark)" }}
-        >
-          {/* Inner decorative glow */}
-          <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-64 rounded-full blur-3xl"
-            style={{ background: "var(--gradient-decorative)", opacity: 0.4 }}
+    <section className="py-16 lg:py-20">
+      <div className="container">
+
+        <div className="relative rounded-2xl overflow-hidden">
+          {/* Background image */}
+          <Image
+            src={ctaBg}
+            alt="CTA background"
+            fill
+            className="object-cover object-center"
+            priority
           />
 
-          <div className="relative z-10 p-12 md:p-20">
-            <p className="text-caption font-bold text-brand-300 uppercase tracking-widest mb-4">
-              Ready to Scale?
-            </p>
-            {/* H1: 48px */}
-            <h2
-              className="font-bold text-white mb-4"
-              style={{ fontSize: "var(--font-size-h1)", lineHeight: "1.15" }}
-            >
-              Ready to Get Started?
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-black/30" />
+
+          {/* Content */}
+          <div className="relative z-10 flex flex-col items-center justify-center text-center py-16 px-8">
+            <h2 className="text-white font-montserrat font-semibold text-3xl lg:text-[36px] leading-tight mb-3">
+              Let&apos;s Solve Your Next Challenge
             </h2>
-            <p className="text-body text-white/70 mb-10 max-w-xl mx-auto font-light">
-              Join hundreds of industrial companies that trust Rotex for their
-              critical operations.
+            <p className="text-white/80 font-montserrat text-[15px] leading-6 mb-8 max-w-sm">
+              Connect with our experts to find the right solution for your application.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact">
-                <Button
-                  size="lg"
-                  className="h-12 px-8 text-small font-semibold bg-white text-brand-600 hover:bg-neutral-100 shadow-xl transition-all duration-200 hover:scale-[1.02]"
-                >
-                  Contact Sales <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/products">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="h-12 px-8 text-small font-semibold border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-200"
-                >
-                  View Products
-                </Button>
-              </Link>
-            </div>
+            <Link
+              href="/contact"
+              className="px-7 py-3 rounded-full border-2 border-white text-white font-montserrat font-semibold text-xs tracking-widest uppercase hover:bg-white hover:text-stone-900 transition-colors duration-200"
+            >
+              Book Free Consultation
+            </Link>
           </div>
-        </motion.div>
+        </div>
+
       </div>
     </section>
   );

@@ -1,7 +1,16 @@
+import type { StaticImageData } from "next/image";
 import logo from "@/assets/logo.svg";
 import { ImageView } from "@/components/ui/image-view";
 
-const partners = [
+type LogoItem = { id: number; src: string | StaticImageData; alt: string };
+
+type TrustedLeadersProps = {
+  title?: string;
+  primary?: boolean;
+  logos?: LogoItem[];
+};
+
+const defaultLogos: LogoItem[] = [
   { id: 0, src: logo, alt: "Partner" },
   { id: 1, src: logo, alt: "Partner" },
   { id: 2, src: logo, alt: "Partner" },
@@ -11,15 +20,25 @@ const partners = [
   { id: 6, src: logo, alt: "Partner" },
 ];
 
-export function TrustedLeaders() {
+export function TrustedLeaders({
+  title = "Trusted by Industry Leaders",
+  primary = false,
+  logos = defaultLogos,
+}: TrustedLeadersProps) {
   return (
     <section className="bg-white border-t border-b border-stone-100">
       <div className="container py-10 flex items-center gap-8">
 
         {/* Label */}
-        <p className="text-gray-700 text-xl font-montserrat font-medium whitespace-nowrap shrink-0">
-          Trusted by Industry Leaders
-        </p>
+        {primary ? (
+          <p className="text-gradient-orange-dark text-xl font-montserrat font-semibold whitespace-nowrap shrink-0">
+            {title}
+          </p>
+        ) : (
+          <p className="text-gray-700 text-xl font-montserrat font-medium whitespace-nowrap shrink-0">
+            {title}
+          </p>
+        )}
 
         {/* Divider */}
         <div className="w-px h-5 bg-stone-200 shrink-0" />
@@ -39,7 +58,7 @@ export function TrustedLeaders() {
 
           {/* Duplicate logos for seamless loop */}
           <div className="animate-marquee flex w-max items-center">
-            {[...partners, ...partners].map(({ id, src, alt }, i) => (
+            {[...logos, ...logos].map(({ id, src, alt }, i) => (
               <div key={`${id}-${i}`} className="shrink-0 px-10">
                 <ImageView
                   src={src}

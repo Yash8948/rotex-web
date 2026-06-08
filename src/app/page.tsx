@@ -3,6 +3,9 @@ import { TrustedLeaders } from "@/components/sections/trusted-leaders";
 import { RedefiningSection } from "@/components/sections/redefining-section";
 import { IndustriesSection } from "@/components/sections/industries-section";
 import { ProductsSection } from "@/components/sections/products-section";
+import { CustomerStoriesSection } from "@/components/sections/customer-stories-section";
+import { LearnSection } from "@/components/sections/learn-section";
+import { CtaSection } from "@/components/sections/cta-section";
 
 export default function Home() {
   return (
@@ -12,6 +15,13 @@ export default function Home() {
       <RedefiningSection />
       <IndustriesSection />
       <ProductsSection />
+      <TrustedLeaders
+        title="Certified & Trusted Worldwide"
+        primary
+      />
+      <CustomerStoriesSection />
+      <LearnSection />
+      <CtaSection />
     </>
   );
 }
