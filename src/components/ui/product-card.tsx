@@ -16,36 +16,31 @@ export function ProductCard({ name, description, image, href, className }: Produ
     <Link
       href={href}
       className={cn(
-        "flex flex-col shrink-0 w-56 rounded-2xl overflow-hidden bg-[#f5f1ef] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200",
+        "flex flex-col shrink-0 w-72 p-5 rounded-2xl bg-stone-100 items-center gap-5",
+        "shadow-[0px_4px_0px_0px_rgba(239,62,35,1)] outline outline-1 outline-offset-[-1px] outline-stone-100",
+        "hover:-translate-y-1 transition-transform duration-200",
         className
       )}
     >
-      {/* Product image — large, vertically centered */}
-      <div className="flex items-center justify-center px-8 pt-8 pb-5" style={{ height: 196 }}>
+      {/* Product image */}
+      <div className="w-64 h-48 overflow-hidden relative rounded-sm">
         <ImageView
           src={image}
           alt={name}
-          width={160}
-          height={160}
-          className="w-full h-full object-contain"
+          fill
+          className="object-cover object-center"
         />
       </div>
 
-      {/* Text — centered */}
-      <div className="flex-1 px-5 pb-6 text-center">
-        <h3 className="text-brand-500 font-montserrat font-bold text-[15px] mb-2 leading-snug">
+      {/* Text */}
+      <div className="self-stretch flex flex-col items-center gap-1.5">
+        <h3 className="self-stretch text-center text-red-600 font-montserrat font-semibold text-xl leading-6">
           {name}
         </h3>
-        <p className="text-stone-500 font-montserrat text-[13px] leading-5">
+        <p className="w-56 text-center text-black font-montserrat font-medium text-base leading-6">
           {description}
         </p>
       </div>
-
-      {/* Bottom brand gradient bar */}
-      <div
-        className="h-0.75 w-full shrink-0"
-        style={{ background: "linear-gradient(to right, #ff9a00, #f03900, #950000, #000000)" }}
-      />
     </Link>
   );
 }

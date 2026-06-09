@@ -30,7 +30,7 @@ export function CtaSection() {
             </p>
             <Link
               href="/contact"
-              className="px-7 py-3 rounded-full border-2 border-white text-white font-montserrat font-semibold text-xs tracking-widest uppercase hover:bg-white hover:text-stone-900 transition-colors duration-200"
+              className="inline-flex justify-center items-center gap-3.5 px-6 py-3.5 rounded-full bg-white text-red-600 font-montserrat font-semibold text-sm uppercase leading-5 hover:bg-stone-100 transition-colors duration-200"
             >
               Book Free Consultation
             </Link>

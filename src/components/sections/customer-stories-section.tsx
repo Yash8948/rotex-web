@@ -46,7 +46,7 @@ const stories = [
   },
 ];
 
-const SCROLL_AMOUNT = 580; // card width (560) + gap (20)
+const SCROLL_AMOUNT = 606; // card width (578) + gap (28)
 
 export function CustomerStoriesSection() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -63,40 +63,39 @@ export function CustomerStoriesSection() {
       <div className="container">
 
         {/* Header */}
-        <div className="flex items-start justify-between mb-10">
-          <div>
-            <h2 className="font-montserrat font-bold leading-tight text-2xl lg:text-[32px] mb-2">
-              <span className="text-gradient-orange-dark">Customer</span>{" "}
-              <span className="text-stone-900">Stories</span>
+        <div className="flex items-end justify-between mb-10">
+          <div className="flex flex-col gap-3">
+            <h2 className="text-gradient-orange-dark font-montserrat font-normal text-3xl lg:text-4xl leading-10">
+              Customer Stories
             </h2>
-            <p className="text-stone-400 font-montserrat text-sm">
+            <p className="text-stone-500 font-montserrat font-medium text-base leading-6">
               Trusted across industries, proven in action
             </p>
           </div>
 
           {/* Arrow nav */}
-          <div className="flex items-center gap-3 shrink-0 mt-1">
+          <div className="flex items-center gap-7 shrink-0">
             <button
               onClick={() => scroll("left")}
               aria-label="Previous"
-              className="w-9 h-9 rounded-full border border-stone-300 flex items-center justify-center hover:border-brand-500 transition-colors duration-150"
+              className="size-10 rounded-full bg-orange-600/10 outline-1 -outline-offset-1 outline-stone-200 flex items-center justify-center hover:outline-orange-600 transition-colors duration-150"
             >
-              <RotexArrow size={7} className="rotate-180" />
+              <RotexArrow size={7} className="rotate-180 text-red-600" />
             </button>
             <button
               onClick={() => scroll("right")}
               aria-label="Next"
-              className="w-9 h-9 rounded-full border border-stone-300 flex items-center justify-center hover:border-brand-500 transition-colors duration-150"
+              className="size-10 rounded-full bg-orange-600/10 outline-1 -outline-offset-1 outline-stone-200 flex items-center justify-center hover:outline-orange-600 transition-colors duration-150"
             >
-              <RotexArrow size={7} />
+              <RotexArrow size={7} className="text-red-600" />
             </button>
           </div>
         </div>
 
-        {/* Card track — inside container */}
+        {/* Card track */}
         <div
           ref={trackRef}
-          className="no-scrollbar flex gap-5 overflow-x-auto scroll-smooth"
+          className="no-scrollbar flex gap-7 overflow-x-auto scroll-smooth"
           style={{ scrollbarWidth: "none" }}
         >
           {stories.map((story) => (

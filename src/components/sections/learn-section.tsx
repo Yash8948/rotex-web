@@ -75,19 +75,16 @@ export function LearnSection() {
   const cards = content[active];
 
   return (
-    <section className="bg-white py-16 lg:py-20">
+    <section className="bg-white py-10 lg:py-20">
       <div className="container">
 
         {/* Heading */}
-        <h2
-          className="text-gradient-orange-dark font-montserrat font-bold leading-tight mb-6"
-          style={{ fontSize: 36 }}
-        >
-          Learn, Explore, and Stay Updated
+        <h2 className="font-montserrat font-normal text-3xl lg:text-4xl leading-10 mb-6">
+          <span className="text-gradient-orange-dark">Resources</span>
         </h2>
 
         {/* Tabs */}
-        <TabsNav tabs={tabs} active={active} onChange={setActive} className="mb-8" />
+        <TabsNav tabs={tabs} active={active} onChange={setActive} className="mb-10" />
 
         {/* 3-column card grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -97,10 +94,10 @@ export function LearnSection() {
         </div>
 
         {/* CTA */}
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-14">
           <Link
             href={`/${active}`}
-            className="px-8 py-3 rounded-full bg-stone-900 text-white font-montserrat font-semibold text-xs tracking-widest uppercase hover:bg-stone-800 transition-colors duration-150"
+            className="inline-flex justify-center items-center gap-3.5 px-6 py-3.5 rounded-full bg-stone-900 text-white font-montserrat font-semibold text-sm uppercase leading-5 hover:bg-stone-800 transition-colors duration-150"
           >
             {ctaLabel[active]}
           </Link>

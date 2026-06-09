@@ -51,54 +51,63 @@ function Counter({ raw, suffix, comma }: { raw: number; suffix: string; comma?: 
 
 export function RedefiningSection() {
   return (
-    <section className="bg-white py-20 container px-[100px]">
+    <section className="bg-white py-14 lg:py-20">
+      <div className="container px-5 sm:px-10 lg:px-20">
 
-      {/* Heading */}
-      <h2 className="text-gradient-orange-dark text-center font-montserrat font-semibold leading-tight mb-4"
-          style={{ fontSize: 38 }}>
-        Redefining Flow Performance
-      </h2>
-
-      {/* Subtext */}
-      <p className="text-center text-stone-400 text-[15px] font-montserrat leading-6 max-w-xl mx-auto mb-12">
-        A new chapter shaped by precision engineering, advanced capabilities, and a commitment
-        to solving the most demanding industrial challenges.
-      </p>
-
-      {/* Video player — 1080×608 */}
-      <div className="rounded-2xl overflow-hidden mb-16 w-full"
-           style={{ aspectRatio: "1080 / 608" }}>
-        <VideoPlayer
-          src="https://www.w3schools.com/html/mov_bbb.mp4"
-          controls
-        />
-      </div>
-
-      {/* Bottom: tagline + stats */}
-      <div className="flex items-center gap-20">
-
-        {/* Left tagline */}
-        <h3 className="font-montserrat font-bold text-stone-900 leading-[1.15] shrink-0"
-            style={{ fontSize: 36 }}>
-          Leading Flow<br />
-          <span className="text-brand-500">Intelligence</span> Since 1967
-        </h3>
-
-        {/* Divider */}
-        <div className="w-px self-stretch bg-stone-100 shrink-0" />
-
-        {/* Stats grid */}
-        <div className="grid grid-cols-3 gap-x-12 gap-y-7 flex-1">
-          {stats.map(({ raw, suffix, label, comma }) => (
-            <div key={label}>
-              <p className="text-brand-500 font-montserrat font-bold text-2xl leading-none mb-1">
-                <Counter raw={raw} suffix={suffix} comma={comma} />
-              </p>
-              <p className="text-gray-700 font-montserrat text-xs leading-4">{label}</p>
-            </div>
-          ))}
+        {/* Heading + Subtext */}
+        <div className="flex flex-col items-center gap-5 mb-14">
+          <h2 className="text-3xl lg:text-4xl font-normal font-montserrat leading-10 text-center">
+            <span className="text-gradient-orange-dark">Redefining Flow Performance</span>
+          </h2>
+          <p className="text-center text-stone-500 text-sm lg:text-base font-medium font-montserrat leading-6 max-w-2xl">
+            A new chapter shaped by precision engineering, advanced capabilities, and a commitment
+            to solving the most demanding industrial challenges.
+          </p>
         </div>
 
+        {/* Video player — 1080×608 */}
+        <div className="rounded-2xl lg:rounded-[30px] overflow-hidden mb-14 lg:mb-16 w-full"
+             style={{ aspectRatio: "1080 / 608" }}>
+          <VideoPlayer
+            src="https://www.w3schools.com/html/mov_bbb.mp4"
+            controls
+          />
+        </div>
+
+        {/* Bottom: tagline + stats */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-24">
+
+          {/* Left tagline */}
+          <h3 className="font-montserrat font-normal text-stone-900 text-3xl lg:text-4xl leading-10 lg:shrink-0">
+            Leading Flow <br />
+            <span className="text-gradient-orange-dark">Intelligence</span> Since 1967
+          </h3>
+
+          {/* Stats grid */}
+          <div className="flex-1 flex flex-col gap-6">
+            <div className="grid grid-cols-3 gap-6">
+              {stats.slice(0, 3).map(({ raw, suffix, label, comma }) => (
+                <div key={label} className="flex flex-col gap-1.5">
+                  <p className="text-red-600 font-montserrat font-medium text-2xl lg:text-3xl leading-10">
+                    <Counter raw={raw} suffix={suffix} comma={comma} />
+                  </p>
+                  <p className="text-stone-900 font-montserrat font-medium text-xs lg:text-sm leading-5">{label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-3 gap-6">
+              {stats.slice(3).map(({ raw, suffix, label, comma }) => (
+                <div key={label} className="flex flex-col gap-1.5">
+                  <p className="text-red-600 font-montserrat font-medium text-2xl lg:text-3xl leading-10">
+                    <Counter raw={raw} suffix={suffix} comma={comma} />
+                  </p>
+                  <p className="text-stone-900 font-montserrat font-medium text-xs lg:text-sm leading-5">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
   );

@@ -92,13 +92,13 @@ function NavDropdownItem({ item }: { item: NavItem }) {
       onMouseLeave={() => item.hasDropdown && setOpen(false)}
     >
       <Link href={item.href} className="flex items-center gap-0.5 group">
-        <span className="text-white/80 text-sm font-medium font-montserrat whitespace-nowrap group-hover:text-white transition-colors duration-150">
+        <span className="text-stone-300 text-sm font-medium font-montserrat whitespace-nowrap group-hover:text-white transition-colors duration-150">
           {item.label}
         </span>
         {item.hasDropdown && (
           <IoChevronDownOutline
             size={14}
-            className="text-white/80 group-hover:text-white transition-colors duration-150 shrink-0"
+            className="text-stone-300 group-hover:text-white transition-colors duration-150 shrink-0"
           />
         )}
       </Link>

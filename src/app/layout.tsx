@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${montserrat.variable} font-montserrat`}>
+      <body className={`${montserrat.variable} font-montserrat`} suppressHydrationWarning>
         <PageLoader />
         <Navbar />
         <main>{children}</main>

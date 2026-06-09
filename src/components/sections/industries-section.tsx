@@ -77,34 +77,33 @@ export function IndustriesSection() {
   const active = industries[activeIndex];
 
   return (
-    <section className="bg-[#f5f1ef] py-16 lg:py-30">
-      <div className="container">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">
+    <section className="bg-zinc-100 py-16 lg:py-28">
+      <div className="container   ">
+        <div className="flex flex-col lg:flex-row gap-5 items-start">
 
           {/* ── LEFT: heading + tabs ── */}
-          <div className="w-full lg:w-72 lg:shrink-0">
-            <h2
-              className="text-gradient-orange-dark font-montserrat font-bold leading-tight mb-4 text-3xl lg:text-[36px]"
-            >
-              Built Around Your Industry
-            </h2>
-
-            <p className="text-stone-500 text-[13px] font-montserrat leading-5 mb-6 lg:mb-8 max-w-sm lg:max-w-56">
-              Tailored solutions designed to meet the operational demands of your
-              sector — ensuring precision, reliability, and long-term performance.
-            </p>
+          <div className="w-full lg:w-96 lg:shrink-0 flex flex-col lg:justify-between lg:self-stretch">
+            <div className="flex flex-col gap-2 mb-8 lg:mb-0">
+              <h2 className="text-gradient-orange-dark font-montserrat font-normal leading-10 text-3xl lg:text-4xl">
+                Built Around Your Industry
+              </h2>
+              <p className="text-zinc-500 text-sm font-medium font-montserrat leading-6">
+                Tailored solutions designed to meet the operational demands of your
+                sector — ensuring precision, reliability, and long-term performance.
+              </p>
+            </div>
 
             {/* Tab list — horizontal scroll on mobile, vertical on desktop */}
-            <div className="flex flex-row overflow-x-auto gap-1 pb-2 lg:flex-col lg:overflow-x-visible lg:pb-0 lg:gap-0">
+            <div className="flex flex-row overflow-x-auto gap-3 pb-2 lg:flex-col lg:overflow-x-visible lg:pb-0 lg:gap-5">
               {industries.map((industry, i) => (
                 <button
                   key={industry.id}
                   onClick={() => setActiveIndex(i)}
                   className={cn(
-                    "shrink-0 text-left py-2.5 lg:py-3 px-4 lg:pl-4 lg:pr-0 border-b-2 lg:border-b-0 lg:border-l-2 font-montserrat font-medium text-sm transition-all duration-150 whitespace-nowrap lg:whitespace-normal rounded-md lg:rounded-none",
+                    "shrink-0 text-left py-0.5 px-4 border-b-2 lg:border-b-0 lg:border-l-2 font-montserrat font-medium text-base lg:text-xl leading-8 transition-all duration-150 whitespace-nowrap lg:whitespace-normal",
                     i === activeIndex
-                      ? "border-brand-500 text-brand-500 bg-brand-500/5 lg:bg-transparent"
-                      : "border-transparent text-stone-700 hover:text-brand-500 hover:border-brand-200"
+                      ? "border-primary text-primary"
+                      : "border-stone-300 text-stone-900 hover:text-primary hover:border-primary"
                   )}
                 >
                   {industry.label}
@@ -113,11 +112,8 @@ export function IndustriesSection() {
             </div>
           </div>
 
-          {/* ── RIGHT: image card — 847×565 from Figma ── */}
-          <div
-            className="w-full flex-1 relative rounded-2xl lg:rounded-3xl overflow-hidden"
-            style={{ height: "clamp(300px, 44vw, 565px)" }}
-          >
+          {/* ── RIGHT: image card — 847×565 aspect ── */}
+          <div className="w-full flex-1 relative rounded-[30px] overflow-hidden aspect-[847/565]">
 
             {/* Animated image swap */}
             <AnimatePresence mode="wait">
@@ -140,19 +136,11 @@ export function IndustriesSection() {
               </motion.div>
             </AnimatePresence>
 
-            {/* Base dark tint */}
-            <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-            {/* Bottom gradient — strong dark for text readability */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.1) 70%, transparent 100%)",
-              }}
-            />
+            {/* Bottom gradient overlay */}
+            <div className="absolute inset-0 bg-linear-to-b from-black/0 to-black pointer-events-none" />
 
             {/* Card content — bottom */}
-            <div className="absolute bottom-0 left-0 right-0 p-8 flex items-end justify-between gap-6 z-10">
+            <div className="absolute bottom-0 left-0 right-0 p-10 flex items-end justify-between gap-6 z-10">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active.id + "-text"}
@@ -161,10 +149,10 @@ export function IndustriesSection() {
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  <h3 className="text-white font-montserrat font-bold text-xl tracking-widest uppercase mb-2">
+                  <h3 className="text-zinc-100 font-montserrat font-medium text-2xl lg:text-3xl uppercase leading-10 mb-2">
                     {active.title}
                   </h3>
-                  <p className="text-white/70 text-[13px] font-montserrat leading-5 max-w-xs">
+                  <p className="text-zinc-100 text-sm lg:text-base font-medium font-montserrat leading-6 max-w-sm">
                     {active.description}
                   </p>
                 </motion.div>
@@ -172,7 +160,7 @@ export function IndustriesSection() {
 
               <Link
                 href={active.href}
-                className="shrink-0 flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white text-brand-500 font-montserrat font-semibold text-sm whitespace-nowrap hover:bg-stone-50 transition-colors duration-150"
+                className="shrink-0 flex items-center gap-2.5 px-5 py-3 rounded-full bg-white text-orange-600 font-montserrat font-medium text-sm lg:text-base leading-7 whitespace-nowrap hover:bg-stone-50 transition-colors duration-150"
               >
                 Explore
                 <RotexArrow size={8} />

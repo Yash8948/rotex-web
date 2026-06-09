@@ -329,4 +329,10 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  .text-gradient-orange-radial {
+    background: radial-gradient(ellipse at 50% 50%, #ff9a00 0%, #f03900 20%, #950000 61%, #000000 87%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }

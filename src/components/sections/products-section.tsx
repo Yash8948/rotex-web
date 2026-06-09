@@ -56,7 +56,7 @@ const products = [
   },
 ];
 
-const SCROLL_AMOUNT = 224; // card width (208) + gap (16)
+const SCROLL_AMOUNT = 308; // card width (288) + gap (20)
 
 export function ProductsSection() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -73,27 +73,26 @@ export function ProductsSection() {
 
       {/* Header — stays inside container */}
       <div className="container">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="font-montserrat font-bold text-stone-900 leading-tight text-2xl lg:text-[32px]">
-            <span className="text-gradient-orange-dark">Engineered Flow Control</span>{" "}
-            Systems
+        <div className="flex items-center justify-between mb-9">
+          <h2 className="text-gradient-orange-dark font-montserrat font-normal text-3xl lg:text-4xl leading-10">
+            Engineered Flow Control Systems
           </h2>
 
           {/* Arrow nav */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-7 shrink-0">
             <button
               onClick={() => scroll("left")}
               aria-label="Previous"
-              className="w-9 h-9 rounded-full border border-stone-300 flex items-center justify-center hover:border-brand-500 transition-colors duration-150"
+              className="size-11 rounded-full bg-orange-600/10 border border-stone-200 flex items-center justify-center hover:border-orange-600 transition-colors duration-150"
             >
-              <RotexArrow size={7} className="rotate-180" />
+              <RotexArrow size={7} className="rotate-180 text-red-600" />
             </button>
             <button
               onClick={() => scroll("right")}
               aria-label="Next"
-              className="w-9 h-9 rounded-full border border-stone-300 flex items-center justify-center hover:border-brand-500 transition-colors duration-150"
+              className="size-11 rounded-full bg-orange-600/10 border border-stone-200 flex items-center justify-center hover:border-orange-600 transition-colors duration-150"
             >
-              <RotexArrow size={7} />
+              <RotexArrow size={7} className="text-red-600" />
             </button>
           </div>
         </div>
@@ -102,9 +101,9 @@ export function ProductsSection() {
       {/* Card track — starts at container left edge, bleeds to right viewport edge */}
       <div
         ref={trackRef}
-        className="no-scrollbar flex gap-4 overflow-x-auto scroll-smooth py-3"
+        className="no-scrollbar flex gap-5 overflow-x-auto scroll-smooth py-3"
         style={{
-          paddingLeft: "max(1rem, calc((100vw - 1280px) / 2))",
+          paddingLeft: "max(1.25rem, calc((100vw - 1280px) / 2))",
           scrollbarWidth: "none",
         }}
       >
@@ -119,7 +118,7 @@ export function ProductsSection() {
       <div className="container flex justify-center mt-10">
         <Link
           href="/products"
-          className="px-8 py-3 rounded-full bg-stone-900 text-white font-montserrat font-semibold text-xs tracking-widest uppercase hover:bg-stone-800 transition-colors duration-150"
+          className="px-6 py-3.5 rounded-full bg-stone-900 text-white font-montserrat font-semibold text-sm uppercase leading-5 hover:bg-stone-800 transition-colors duration-150"
         >
           View All Products
         </Link>

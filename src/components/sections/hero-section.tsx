@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { VideoPlayer } from "@/components/ui/video-player";
 import { RotexArrow } from "@/components/ui/rotex-arrow";
 
-/* White bg + orange arrow → on hover: primary bg + white arrow */
 function ArrowBtn({
   dir,
   onClick,
@@ -14,19 +13,15 @@ function ArrowBtn({
   dir: "prev" | "next";
   onClick: () => void;
 }) {
-  const [hovered, setHovered] = useState(false);
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="size-11 rounded-full flex items-center justify-center transition-colors duration-200"
-      style={{ background: hovered ? "#EF3E23" : "#ffffff" }}
+      className="size-10 rounded-full flex items-center justify-center bg-stone-100 hover:bg-stone-200 transition-colors duration-200"
       aria-label={dir === "prev" ? "Previous" : "Next"}
     >
       <RotexArrow
         size={9}
-        color={hovered ? "#ffffff" : "#EF3E23"}
+        color="#EF3E23"
         className={dir === "prev" ? "rotate-180" : undefined}
       />
     </button>
@@ -39,20 +34,20 @@ const SLIDES = [
   { src: "https://www.w3schools.com/html/mov_bbb.mp4" },
 ];
 
-/* ── Change HEX_W to resize the hex — height auto-computed from 577:496 ratio ── */
-const HEX_W = 520;
-const HEX_H = Math.round(HEX_W * (496 / 577));
+/* Figma: 577×496 exact */
+const HEX_W = 577;
+const HEX_H = 496;
 
-/* Hex path normalised to 0–1 for clipPathUnits="objectBoundingBox"
-   (all x ÷ 577, all y ÷ 496) — scales automatically with any container size */
+/* Regular hexagon with 20px rounded corners, in objectBoundingBox (0–1).
+   Vertices: TL(0.25,0) TR(0.75,0) R(1,0.5) BR(0.75,1) BL(0.25,1) L(0,0.5)
+   Each Q bezier cuts 20px off the corner using computed tangent offsets. */
 const HEX_PATH_BB =
-  "M0.22511,0.96120 L0.00899,0.53847 C-0.00300,0.51446 -0.00300,0.48490 0.00899,0.46157 L0.22511,0.03813 C0.23761,0.01475 0.25993,0 0.28390,0 L0.71612,0 C0.74115,0 0.76291,0.01476 0.77489,0.03813 L0.99101,0.46157 C1.00300,0.48491 1.00300,0.51448 0.99101,0.53847 L0.77489,0.96120 C0.76292,0.98522 0.74115,1 0.71612,1 L0.28390,1 C0.25993,1 0.23762,0.98522 0.22511,0.96120 Z";
+  "M0.2847,0 L0.7153,0 Q0.75,0 0.7674,0.0349 L0.9826,0.4653 Q1.0,0.5 0.9826,0.5347 L0.7674,0.9651 Q0.75,1.0 0.7153,1.0 L0.2847,1.0 Q0.25,1.0 0.2326,0.9651 L0.0174,0.5347 Q0.0,0.5 0.0174,0.4653 L0.2326,0.0349 Q0.25,0 0.2847,0 Z";
 
-/* Open path — traces only the LEFT edge of the hex from top-left corner →
-   left vertex → bottom-left corner. Used for the orange stroke so it doesn't
-   bleed onto the flat top / bottom edges. */
+/* Left-edge stroke — three Q beziers matching every rounded corner of HEX_PATH_BB:
+   TL corner Q(144.25,0), L vertex Q(0,248), BL corner Q(144.25,496) */
 const HEX_LEFT_EDGE =
-  "M163.813,0 C149.978,0 137.111,7.31554 129.891,18.9152 L5.18832,228.926 C-1.72947,240.52 -1.72947,255.169 5.18832,267.08 L129.891,476.761 C137.117,488.666 149.984,496 163.813,496";
+  "M164.27,0 Q144.25,0 134.21,17.31 L10.04,230.79 Q0,248 10.04,265.21 L134.21,478.69 Q144.25,496 164.27,496";
 
 export function HeroSection() {
   const [index, setIndex] = useState(0);
@@ -61,63 +56,74 @@ export function HeroSection() {
   const next = () => setIndex(i => (i + 1) % SLIDES.length);
 
   return (
-    <section className="relative bg-[#0D0D0D] min-h-screen">
+    <section className="relative w-full flex justify-center overflow-hidden bg-stone-900">
+      {/* 1440×740 canvas — centers on wide viewports, fills narrow ones */}
+      <div className="relative w-full max-w-[1440px] lg:h-[740px]">
 
-      {/* Glow container — overflow-hidden here contains the 900px glow without clipping the hex */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Hex slider — desktop only; Figma: left 784px (54.44%), top 160px */}
         <div
-          className="absolute bottom-0 right-0 w-225 h-225 rounded-full blur-[140px]"
-          style={{
-            background: "radial-gradient(circle, #f03900 0%, transparent 65%)",
-            opacity: 0.15,
-            transform: "translate(30%, 30%)",
-          }}
-        />
-      </div>
-
-      <div className="container relative z-10 h-screen pt-24 flex gap-16">
-
-        {/* ── LEFT: content pushed to bottom ── */}
-        <div className="flex-1 flex flex-col justify-end pb-16 gap-6">
-
-          {/* Heading */}
-          <h1
-            className="font-bold text-white font-montserrat"
-            style={{ fontSize: 48, lineHeight: 1.1 }}
-          >
-            Flow Control.<br />
-            Where It Matters Most.
-          </h1>
-
-          {/* Subtext */}
-          <p className="text-white/60 text-[15px] font-montserrat leading-6 max-w-120">
-            Engineered precise solutions that reduce downtime, enhance safety,
-            and ensure uninterrupted operations across critical industry
-            applications.
-          </p>
-
-          {/* Buttons + arrows — single row */}
-          <div className="flex items-center gap-3">
-            <HeroOutlineBtn href="/solutions">Explore Solutions</HeroOutlineBtn>
-            <HeroOutlineBtn href="/downloads">
-              Download &apos;Zero Downtime Blue Print&apos;
-            </HeroOutlineBtn>
-
-            <ArrowBtn dir="prev" onClick={prev} />
-            <ArrowBtn dir="next" onClick={next} />
-          </div>
-        </div>
-
-        {/* ── RIGHT: hexagon — fixed 577×496, vertically centered ── */}
-        <div className="shrink-0 flex items-center overflow-visible">
+          className="absolute z-20 hidden lg:block"
+          style={{ left: "54.44%", top: "160px" }}
+        >
           <HexSlider index={index} />
         </div>
 
+        {/* Hex — mobile decorative (clipped by section overflow-hidden) */}
+        <div className="absolute right-[-60px] top-1/2 -translate-y-1/2 z-10 lg:hidden pointer-events-none opacity-20">
+          <HexSlider index={index} />
+        </div>
+
+        {/* Content block — Figma: left 80px, top 404.5px, w 669px, gap-9
+            Mobile: relative flow with padding; Desktop: absolute positioned */}
+        <div className="relative lg:absolute z-30 flex flex-col gap-9 px-6 pt-36 pb-14 lg:px-0 lg:pt-0 lg:pb-0 lg:left-[80px] lg:top-[404px] lg:w-[669px]">
+
+          <div className="flex flex-col gap-5">
+            {/* Figma: text-5xl (48px), weight 400, leading-[58px], letter-spacing -1.3px */}
+            <h1
+              className="max-w-[597px] text-white font-normal leading-[58px]"
+              style={{
+                fontFamily: "'Montserrat', sans-serif",
+                fontSize: "clamp(30px, 3.33vw, 48px)",
+                letterSpacing: "-1.3px",
+              }}
+            >
+              Flow Control.
+              <br />
+              Where It Matters Most.
+            </h1>
+
+            {/* Figma: text-base (16px), weight 500, leading-6, color zinc-100 */}
+            <p
+              className="max-w-[547px] text-zinc-100 text-base font-medium leading-6"
+              style={{ fontFamily: "'Montserrat', sans-serif" }}
+            >
+              Engineered precise solutions that reduce downtime, enhance safety,
+              and ensure uninterrupted operations across critical industry
+              applications.
+            </p>
+          </div>
+
+          {/* Figma: buttons gap-5, outline outline-1 outline-offset-[-1px] outline-stone-500 */}
+          <div className="flex flex-wrap items-center gap-4 lg:gap-5">
+            <HeroOutlineBtn href="/solutions">EXPLORE SOLUTIONS</HeroOutlineBtn>
+            <HeroOutlineBtn href="/downloads">
+              DOWNLOAD &apos;ZERO DOWNTIME BLUE PRINT&apos;
+            </HeroOutlineBtn>
+
+            <nav aria-label="Banner navigation" className="inline-flex items-center gap-4">
+              <ArrowBtn dir="prev" onClick={prev} />
+              <ArrowBtn dir="next" onClick={next} />
+            </nav>
+          </div>
+
+        </div>
       </div>
     </section>
   );
 }
 
+/* Figma: rounded-[100px], outline-1, outline-offset-[-1px], outline-stone-500,
+   px-5 py-2.5, text-xs (12px), font-semibold, uppercase, leading-5 */
 function HeroOutlineBtn({
   href,
   children,
@@ -128,20 +134,26 @@ function HeroOutlineBtn({
   return (
     <Link
       href={href}
-      className="px-5 py-2.5 rounded-full border border-white/40 text-white text-[11px] font-semibold font-montserrat tracking-widest uppercase whitespace-nowrap hover:bg-white/8 transition-colors duration-150"
+      className="inline-flex items-center whitespace-nowrap rounded-[100px] outline outline-1 outline-offset-[-1px] outline-stone-500 px-5 py-2.5 text-white hover:bg-white/5 transition-colors duration-150"
+      style={{
+        fontFamily: "'Montserrat', sans-serif",
+        fontSize: 12,
+        fontWeight: 600,
+        lineHeight: "20px",
+        textTransform: "uppercase",
+      }}
     >
       {children}
     </Link>
   );
 }
 
-/* Hexagon — objectBoundingBox clip scales with any HEX_W, viewBox SVG for stroke */
+/* Hexagon clip + video slider */
 function HexSlider({ index }: { index: number }) {
   return (
     <div style={{ width: HEX_W, height: HEX_H, position: "relative", flexShrink: 0 }}>
 
-      {/* Hidden SVG — declares the clip path in normalised 0–1 coords so it
-         0 scales automatically to whatever size the container is */}
+      {/* Declares clip path in normalised 0–1 coords — scales with container */}
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
         <defs>
           <clipPath id="hex-clip-bb" clipPathUnits="objectBoundingBox">
@@ -150,14 +162,13 @@ function HexSlider({ index }: { index: number }) {
         </defs>
       </svg>
 
-      {/* Video — clipped by the objectBoundingBox clipPath, always fits the container */}
+      {/* Video clipped to hex shape */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           clipPath: "url(#hex-clip-bb)",
           background: "#0D0D0D",
-          // overflow: "hidden",
         }}
       >
         <AnimatePresence mode="wait">
@@ -178,7 +189,7 @@ function HexSlider({ index }: { index: number }) {
         </AnimatePresence>
       </div>
 
-      {/* SVG overlay — gradient left-edge stroke */}
+      {/* Gradient left-edge stroke */}
       <svg
         viewBox="0 0 577 496"
         width="100%"
@@ -187,7 +198,6 @@ function HexSlider({ index }: { index: number }) {
         style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
       >
         <defs>
-          {/* Top → bottom: bright orange → deep orange-red → dark red */}
           <linearGradient id="hex-stroke-grad" x1="0" y1="0" x2="0" y2="496" gradientUnits="userSpaceOnUse">
             <stop offset="0%"   stopColor="#FF9A00" />
             <stop offset="45%"  stopColor="#F03900" />
