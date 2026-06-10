@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { Plus } from "lucide-react";
 import { ImageView } from "@/components/ui/image-view";
 import { RotexArrow } from "@/components/ui/rotex-arrow";
 import { cn } from "@/lib/utils";
@@ -76,15 +77,99 @@ export function IndustriesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = industries[activeIndex];
 
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
   return (
     <section className="bg-zinc-100 py-16 lg:py-28">
       <div className="container   ">
-        <div className="flex flex-col lg:flex-row gap-5 items-start">
+
+        {/* Heading + subtext */}
+        <div className="flex flex-col gap-2 mb-8 lg:hidden">
+          <h2 className="text-gradient-orange-dark font-montserrat font-normal leading-10 text-3xl">
+            Built Around Your Industry
+          </h2>
+          <p className="text-zinc-500 text-sm font-medium font-montserrat leading-6">
+            Tailored solutions designed to meet the operational demands of your
+            sector — ensuring precision, reliability, and long-term performance.
+          </p>
+        </div>
+
+        {/* ── MOBILE: accordion ── */}
+        <div className="flex flex-col lg:hidden">
+          {industries.map((industry, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <div key={industry.id} className="border-b border-stone-300">
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  className={cn(
+                    "w-full flex items-center justify-between gap-3 py-4 text-left font-montserrat font-medium text-base leading-8 transition-colors duration-150",
+                    isOpen ? "text-primary" : "text-stone-900"
+                  )}
+                >
+                  {industry.label}
+                  <Plus
+                    size={18}
+                    className={cn(
+                      "shrink-0 transition-transform duration-200",
+                      isOpen ? "rotate-45 text-primary" : "text-stone-500"
+                    )}
+                  />
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="relative rounded-2xl overflow-hidden aspect-4/3 mb-4">
+                        <ImageView
+                          fill
+                          src={industry.image}
+                          alt={industry.title}
+                          containerClassName="w-full h-full"
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-b from-black/0 to-black pointer-events-none" />
+
+                        <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-4 z-10">
+                          <div>
+                            <h3 className="text-zinc-100 font-montserrat font-medium text-xl uppercase leading-8 mb-2">
+                              {industry.title}
+                            </h3>
+                            <p className="text-zinc-100 text-sm font-medium font-montserrat leading-6">
+                              {industry.description}
+                            </p>
+                          </div>
+
+                          <Link
+                            href={industry.href}
+                            className="w-full flex items-center justify-center gap-2.5 px-5 py-3 rounded-[45px] bg-white text-orange-600 font-montserrat font-medium text-base leading-7 hover:bg-primary hover:text-white transition-colors duration-150"
+                          >
+                            Explore
+                            <RotexArrow size={8} color="currentColor" />
+                          </Link>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── DESKTOP: tabs + image ── */}
+        <div className="hidden lg:flex gap-5 items-start">
 
           {/* ── LEFT: heading + tabs ── */}
-          <div className="w-full lg:w-96 lg:shrink-0 flex flex-col lg:justify-between lg:self-stretch">
-            <div className="flex flex-col gap-2 mb-8 lg:mb-0">
-              <h2 className="text-gradient-orange-dark font-montserrat font-normal leading-10 text-3xl lg:text-4xl">
+          <div className="w-96 shrink-0 flex flex-col justify-between self-stretch">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-gradient-orange-dark font-montserrat font-normal leading-10 text-4xl">
                 Built Around Your Industry
               </h2>
               <p className="text-zinc-500 text-sm font-medium font-montserrat leading-6">
@@ -93,14 +178,14 @@ export function IndustriesSection() {
               </p>
             </div>
 
-            {/* Tab list — horizontal scroll on mobile, vertical on desktop */}
-            <div className="flex flex-row overflow-x-auto gap-3 pb-2 lg:flex-col lg:overflow-x-visible lg:pb-0 lg:gap-5">
+            {/* Tab list */}
+            <div className="flex flex-col gap-5">
               {industries.map((industry, i) => (
                 <button
                   key={industry.id}
                   onClick={() => setActiveIndex(i)}
                   className={cn(
-                    "shrink-0 text-left py-0.5 px-4 border-b-2 lg:border-b-0 lg:border-l-2 font-montserrat font-medium text-base lg:text-xl leading-8 transition-all duration-150 whitespace-nowrap lg:whitespace-normal",
+                    "shrink-0 text-left py-0.5 px-4 border-l-2 font-montserrat font-medium text-xl leading-8 transition-all duration-150 whitespace-normal",
                     i === activeIndex
                       ? "border-primary text-primary"
                       : "border-stone-300 text-stone-900 hover:text-primary hover:border-primary"

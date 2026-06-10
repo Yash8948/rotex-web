@@ -52,8 +52,13 @@ export function CustomerStoriesSection() {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: "left" | "right") => {
-    trackRef.current?.scrollBy({
-      left: dir === "right" ? SCROLL_AMOUNT : -SCROLL_AMOUNT,
+    const track = trackRef.current;
+    if (!track) return;
+    const firstCard = track.firstElementChild as HTMLElement | null;
+    const gap = parseFloat(getComputedStyle(track).columnGap || "0");
+    const amount = firstCard ? firstCard.offsetWidth + gap : SCROLL_AMOUNT;
+    track.scrollBy({
+      left: dir === "right" ? amount : -amount,
       behavior: "smooth",
     });
   };
@@ -63,18 +68,18 @@ export function CustomerStoriesSection() {
       <div className="container">
 
         {/* Header */}
-        <div className="flex items-end justify-between mb-10">
-          <div className="flex flex-col gap-3">
-            <h2 className="text-gradient-orange-dark font-montserrat font-normal text-3xl lg:text-4xl leading-10">
+        <div className="flex flex-col gap-1.5 lg:flex-row lg:items-end lg:justify-between lg:gap-3 mb-8 lg:mb-10">
+          <div className="flex flex-col gap-1.5 lg:gap-3">
+            <h2 className="text-gradient-orange-dark font-montserrat font-normal text-2xl lg:text-4xl leading-8 lg:leading-10">
               Customer Stories
             </h2>
-            <p className="text-stone-500 font-montserrat font-medium text-base leading-6">
+            <p className="text-stone-500 font-montserrat font-medium text-sm lg:text-base leading-5 lg:leading-6">
               Trusted across industries, proven in action
             </p>
           </div>
 
-          {/* Arrow nav */}
-          <div className="flex items-center gap-7 shrink-0">
+          {/* Arrow nav — desktop */}
+          <div className="hidden lg:flex items-center gap-7 shrink-0">
             <button
               onClick={() => scroll("left")}
               aria-label="Previous"
@@ -95,12 +100,32 @@ export function CustomerStoriesSection() {
         {/* Card track */}
         <div
           ref={trackRef}
-          className="no-scrollbar flex gap-7 overflow-x-auto scroll-smooth"
+          className="no-scrollbar flex gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory lg:snap-none"
           style={{ scrollbarWidth: "none" }}
         >
           {stories.map((story) => (
-            <CustomerStoryCard key={story.id} {...story} />
+            <div key={story.id} className="w-full lg:w-auto shrink-0 snap-center">
+              <CustomerStoryCard {...story} />
+            </div>
           ))}
+        </div>
+
+        {/* Arrow nav — mobile */}
+        <div className="flex lg:hidden items-center justify-center gap-3.5 mt-6">
+          <button
+            onClick={() => scroll("left")}
+            aria-label="Previous"
+            className="size-10 rounded-full bg-orange-600/10 outline-1 -outline-offset-1 outline-stone-200 flex items-center justify-center hover:outline-orange-600 transition-colors duration-150"
+          >
+            <RotexArrow size={7} className="rotate-180 text-red-600" />
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            aria-label="Next"
+            className="size-10 rounded-full bg-orange-600/10 outline-1 -outline-offset-1 outline-stone-200 flex items-center justify-center hover:outline-orange-600 transition-colors duration-150"
+          >
+            <RotexArrow size={7} className="text-red-600" />
+          </button>
         </div>
 
       </div>

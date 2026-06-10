@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node __check_stories.mjs)",
+      "Bash(node __check_footer.mjs)"
+    ]
+  }
+}

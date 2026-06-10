@@ -11,7 +11,9 @@ const stats = [
   { raw: 6000, suffix: "+",  label: "Customised Solutions Developed", comma: true },
 ];
 
-function Counter({ raw, suffix, comma }: { raw: number; suffix: string; comma?: boolean }) {
+const MOBILE_ORDER = [0, 1, 3, 4, 2, 5];
+
+function Counter({ raw, suffix, comma, suffixClassName }: { raw: number; suffix: string; comma?: boolean; suffixClassName?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
@@ -44,7 +46,8 @@ function Counter({ raw, suffix, comma }: { raw: number; suffix: string; comma?: 
 
   return (
     <span ref={ref}>
-      {display}{suffix}
+      {display}
+      {suffix && <span className={suffixClassName}>{suffix}</span>}
     </span>
   );
 }
@@ -74,8 +77,30 @@ export function RedefiningSection() {
           />
         </div>
 
-        {/* Bottom: tagline + stats */}
-        <div className="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-24">
+        {/* Bottom: tagline + stats — mobile */}
+        <div className="flex lg:hidden flex-col items-center gap-10">
+          <h3 className="text-center font-montserrat font-normal text-stone-900 text-2xl leading-8">
+            Leading Flow <br />
+            <span className="text-gradient-orange-dark">Intelligence</span> Since 1967
+          </h3>
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-9 w-full max-w-80">
+            {MOBILE_ORDER.map((i) => {
+              const { raw, suffix, label, comma } = stats[i];
+              return (
+                <div key={label} className="flex flex-col items-center gap-1.5">
+                  <p className="text-stone-900 text-center font-montserrat font-medium text-2xl leading-10">
+                    <Counter raw={raw} suffix={suffix} comma={comma} suffixClassName="text-red-600" />
+                  </p>
+                  <p className="text-stone-500 text-center font-montserrat font-medium text-sm leading-5">{label}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom: tagline + stats — desktop */}
+        <div className="hidden lg:flex lg:items-center gap-10 lg:gap-24">
 
           {/* Left tagline */}
           <h3 className="font-montserrat font-normal text-stone-900 text-3xl lg:text-4xl leading-10 lg:shrink-0">

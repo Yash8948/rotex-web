@@ -86,15 +86,18 @@ export function LearnSection() {
         {/* Tabs */}
         <TabsNav tabs={tabs} active={active} onChange={setActive} className="mb-10" />
 
-        {/* 3-column card grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Cards — horizontal swiper on mobile, 3-column grid on desktop */}
+        <div
+          className="no-scrollbar flex lg:grid lg:grid-cols-3 gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory lg:snap-none -mx-5 px-5 lg:mx-0 lg:px-0"
+          style={{ scrollbarWidth: "none" }}
+        >
           {cards.map((card) => (
-            <ArticleCard key={card.href} {...card} />
+            <ArticleCard key={card.href} {...card} className="w-64 shrink-0 snap-center lg:w-auto" />
           ))}
         </div>
 
         {/* CTA */}
-        <div className="flex justify-center mt-14">
+        <div className="flex justify-center mt-10 lg:mt-14">
           <Link
             href={`/${active}`}
             className="inline-flex justify-center items-center gap-3.5 px-6 py-3.5 rounded-full bg-stone-900 text-white font-montserrat font-semibold text-sm uppercase leading-5 hover:bg-stone-800 transition-colors duration-150"

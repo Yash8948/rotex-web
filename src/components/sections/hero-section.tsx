@@ -1,6 +1,6 @@
 
 "use client";
-import { useState } from "react";
+import { useId, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { VideoPlayer } from "@/components/ui/video-player";
@@ -68,16 +68,12 @@ export function HeroSection() {
           <HexSlider index={index} />
         </div>
 
-        {/* Hex — mobile decorative (clipped by section overflow-hidden) */}
-        <div className="absolute right-[-60px] top-1/2 -translate-y-1/2 z-10 lg:hidden pointer-events-none opacity-20">
-          <HexSlider index={index} />
-        </div>
-
         {/* Content block — Figma: left 80px, top 404.5px, w 669px, gap-9
-            Mobile: relative flow with padding; Desktop: absolute positioned */}
-        <div className="relative lg:absolute z-30 flex flex-col gap-9 px-6 pt-36 pb-14 lg:px-0 lg:pt-0 lg:pb-0 lg:left-[80px] lg:top-[404px] lg:w-[669px]">
+            Mobile: relative flow with padding, offset below the fixed h-20 header (80px) + 40px gap;
+            Desktop: absolute positioned */}
+        <div className="relative lg:absolute z-30 flex flex-col gap-6 lg:gap-9 px-6 pt-30 pb-0 lg:px-0 lg:pt-0 lg:left-[80px] lg:top-[404px] lg:w-[669px]">
 
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 lg:gap-5">
             {/* Figma: text-5xl (48px), weight 400, leading-[58px], letter-spacing -1.3px */}
             <h1
               className="max-w-[597px] text-white font-normal leading-[58px]"
@@ -87,8 +83,7 @@ export function HeroSection() {
                 letterSpacing: "-1.3px",
               }}
             >
-              Flow Control.
-              <br />
+              <span className="text-white">Flow Control. </span><br />
               Where It Matters Most.
             </h1>
 
@@ -103,14 +98,35 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Figma: buttons gap-5, outline outline-1 outline-offset-[-1px] outline-stone-500 */}
-          <div className="flex flex-wrap items-center gap-4 lg:gap-5">
+          {/* Mobile: stacked, content-width buttons */}
+          <div className="flex flex-col items-start gap-4 lg:hidden">
+            <HeroOutlineBtn href="/solutions">EXPLORE SOLUTIONS</HeroOutlineBtn>
+            <HeroOutlineBtn href="/downloads">
+              DOWNLOAD &apos;ZERO DOWNTIME BLUE PRINT&apos;
+            </HeroOutlineBtn>
+          </div>
+
+          {/* Desktop: inline buttons + arrow nav — Figma: gap-5, outline outline-1 outline-offset-[-1px] outline-stone-500 */}
+          <div className="hidden lg:flex flex-wrap items-center gap-5">
             <HeroOutlineBtn href="/solutions">EXPLORE SOLUTIONS</HeroOutlineBtn>
             <HeroOutlineBtn href="/downloads">
               DOWNLOAD &apos;ZERO DOWNTIME BLUE PRINT&apos;
             </HeroOutlineBtn>
 
             <nav aria-label="Banner navigation" className="inline-flex items-center gap-4">
+              <ArrowBtn dir="prev" onClick={prev} />
+              <ArrowBtn dir="next" onClick={next} />
+            </nav>
+          </div>
+
+          {/* Mobile: hex video slider — bleeds past the right edge of the screen
+              (Figma: 384px hex in a 384px frame, shifted right so ~9% overflows),
+              clipped by the section's overflow-hidden. Nav arrows stay within the visible area. */}
+          <div className="relative mt-2 -mr-10 lg:hidden">
+            <div className="w-[112%]">
+              <HexSlider index={index} fluid />
+            </div>
+            <nav aria-label="Banner navigation" className="absolute right-[15%] bottom-2 inline-flex items-center gap-3">
               <ArrowBtn dir="prev" onClick={prev} />
               <ArrowBtn dir="next" onClick={next} />
             </nav>
@@ -134,7 +150,7 @@ function HeroOutlineBtn({
   return (
     <Link
       href={href}
-      className="inline-flex items-center whitespace-nowrap rounded-[100px] outline outline-1 outline-offset-[-1px] outline-stone-500 px-5 py-2.5 text-white hover:bg-white/5 transition-colors duration-150"
+      className="inline-flex items-center justify-center whitespace-nowrap text-center rounded-[100px] outline outline-1 outline-offset-[-1px] outline-stone-500 px-5 py-2.5 text-white hover:bg-white/5 transition-colors duration-150"
       style={{
         fontFamily: "'Montserrat', sans-serif",
         fontSize: 12,
@@ -149,14 +165,28 @@ function HeroOutlineBtn({
 }
 
 /* Hexagon clip + video slider */
-function HexSlider({ index }: { index: number }) {
+function HexSlider({ index, fluid = false }: { index: number; fluid?: boolean }) {
+  /* Unique per instance — this component renders twice (desktop + mobile),
+     and SVG id references break when the defining element sits in a
+     display:none subtree, so duplicate ids must be avoided. */
+  const uid = useId();
+  const clipId = `hex-clip-bb-${uid}`;
+  const gradId = `hex-stroke-grad-${uid}`;
+
+  /* Fluid: scales to the parent's width via aspect-ratio instead of a fixed
+     577×496 box — the clip-path (objectBoundingBox) and stroke SVG (viewBox)
+     already scale, so no transform is needed and nothing overflows the viewport. */
+  const sizeStyle = fluid
+    ? { width: "100%", aspectRatio: `${HEX_W} / ${HEX_H}`, position: "relative" as const }
+    : { width: HEX_W, height: HEX_H, position: "relative" as const, flexShrink: 0 };
+
   return (
-    <div style={{ width: HEX_W, height: HEX_H, position: "relative", flexShrink: 0 }}>
+    <div style={sizeStyle}>
 
       {/* Declares clip path in normalised 0–1 coords — scales with container */}
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
         <defs>
-          <clipPath id="hex-clip-bb" clipPathUnits="objectBoundingBox">
+          <clipPath id={clipId} clipPathUnits="objectBoundingBox">
             <path d={HEX_PATH_BB} />
           </clipPath>
         </defs>
@@ -167,7 +197,7 @@ function HexSlider({ index }: { index: number }) {
         style={{
           position: "absolute",
           inset: 0,
-          clipPath: "url(#hex-clip-bb)",
+          clipPath: `url(#${clipId})`,
           background: "#0D0D0D",
         }}
       >
@@ -198,7 +228,7 @@ function HexSlider({ index }: { index: number }) {
         style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
       >
         <defs>
-          <linearGradient id="hex-stroke-grad" x1="0" y1="0" x2="0" y2="496" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="496" gradientUnits="userSpaceOnUse">
             <stop offset="0%"   stopColor="#FF9A00" />
             <stop offset="45%"  stopColor="#F03900" />
             <stop offset="100%" stopColor="#950000" />
@@ -207,7 +237,7 @@ function HexSlider({ index }: { index: number }) {
         <path
           d={HEX_LEFT_EDGE}
           fill="none"
-          stroke="url(#hex-stroke-grad)"
+          stroke={`url(#${gradId})`}
           strokeWidth="10"
           strokeLinecap="round"
           strokeLinejoin="round"

@@ -26,33 +26,33 @@ export function TrustedLeaders({
   logos = defaultLogos,
 }: TrustedLeadersProps) {
   return (
-    <section className={primary ? "bg-white border-t border-b border-stone-100 h-64" : "bg-white border-t border-b border-stone-100 h-36"}>
-      <div className="container h-full flex items-center gap-8">
+    <section className={primary ? "bg-white border-t border-b border-stone-100 py-10 lg:py-0 lg:h-64" : "bg-white border-t border-b border-stone-100 py-8 lg:py-0 lg:h-36"}>
+      <div className="container h-full flex flex-col items-center gap-5 lg:flex-row lg:gap-8">
 
         {/* Label */}
         {primary ? (
-          <p className="text-gradient-orange-dark text-2xl font-montserrat font-normal leading-8 whitespace-nowrap shrink-0">
+          <p className="text-gradient-orange-dark self-stretch text-center lg:text-left text-base lg:text-2xl font-montserrat font-normal leading-6 lg:leading-8 lg:whitespace-nowrap shrink-0">
             {title}
           </p>
         ) : (
-          <p className="text-stone-500 text-xl font-montserrat font-medium leading-7 whitespace-nowrap shrink-0">
+          <p className="text-stone-500 self-stretch text-center lg:text-left text-base lg:text-xl font-montserrat font-medium leading-6 lg:leading-7 lg:whitespace-nowrap shrink-0">
             {title}
           </p>
         )}
 
-        {/* Divider */}
-        <div className="w-px h-5 bg-stone-200 shrink-0" />
+        {/* Divider — desktop only */}
+        <div className="hidden lg:block w-px h-5 bg-stone-200 shrink-0" />
 
         {/* Marquee */}
         {primary ? (
-          <div className="relative flex-1 overflow-hidden h-24">
+          <div className="relative self-stretch lg:self-auto lg:flex-1 lg:min-w-0 overflow-hidden h-14 lg:h-24">
             <div className="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
               style={{ background: "linear-gradient(to right, #ffffff 20%, transparent 100%)" }} />
             <div className="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
               style={{ background: "linear-gradient(to left, #ffffff 20%, transparent 100%)" }} />
-            <div className="animate-marquee flex items-center gap-14 w-max h-24">
+            <div className="animate-marquee flex items-center gap-14 w-max h-14 lg:h-24">
               {[...logos, ...logos].map(({ id, src, alt }, i) => (
-                <div key={`${id}-${i}`} className="shrink-0 h-24 flex items-center">
+                <div key={`${id}-${i}`} className="shrink-0 h-14 lg:h-24 flex items-center">
                   <ImageView
                     src={src}
                     alt={alt}
@@ -65,14 +65,14 @@ export function TrustedLeaders({
             </div>
           </div>
         ) : (
-          <div className="relative flex-1 overflow-hidden h-16">
+          <div className="relative self-stretch lg:self-auto lg:flex-1 lg:min-w-0 overflow-hidden h-14 lg:h-16">
             <div className="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
               style={{ background: "linear-gradient(to right, #ffffff 20%, transparent 100%)" }} />
             <div className="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none"
               style={{ background: "linear-gradient(to left, #ffffff 20%, transparent 100%)" }} />
-            <div className="animate-marquee flex items-center gap-12 w-max h-16">
+            <div className="animate-marquee flex items-center gap-12 w-max h-14 lg:h-16">
               {[...logos, ...logos].map(({ id, src, alt }, i) => (
-                <div key={`${id}-${i}`} className="shrink-0 h-16 flex items-center">
+                <div key={`${id}-${i}`} className="shrink-0 h-14 lg:h-16 flex items-center">
                   <ImageView
                     src={src}
                     alt={alt}

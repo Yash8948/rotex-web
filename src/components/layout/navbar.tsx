@@ -134,10 +134,12 @@ const LOGO_DURATION = 0.6;
    A spacer inside the header reserves the slot so nav items shift correctly.
 ─────────────────────────────────────────────────────────────────────────── */
 function FloatingLogo({ scrolled }: { scrolled: boolean }) {
-  /* navbar: top=(96-31)/2=32, size=144×31  |  hero: top=112, size=282×60 */
+  /* navbar: top=(96-31)/2=32, size=144×31  |  hero: top=112, size=282×60
+     Desktop/tablet only — on mobile the swipe-up animation eats hero space,
+     so the header shows a static logo instead (see Navbar). */
   return (
     <motion.div
-      className="fixed left-0 right-0 pointer-events-none"
+      className="fixed left-0 right-0 pointer-events-none hidden lg:block"
       style={{ zIndex: 60 }}
       initial={false}
       animate={{ top: scrolled ? 32 : 112 }}
@@ -184,13 +186,18 @@ export function Navbar() {
         animate={{ backgroundColor: scrolled ? "#201D1D" : "rgba(13,13,13,0)" }}
         transition={{ duration: DURATION, ease: EASE }}
       >
-        <div className="container h-24 flex items-center justify-between">
+        <div className="container h-20 lg:h-24 flex items-center justify-between">
 
             {/* LEFT — spacer width = logo(144) + gap(24) when scrolled, 0 when not.
                 Nav items start right after spacer so they align with logo's left edge at rest. */}
             <div className="flex items-center">
+              {/* Mobile: static logo, no swipe-up animation/space reservation */}
+              <Link href="/" className="lg:hidden">
+                <Image src={logo} alt="Rotex" width={96} height={20} className="w-24 h-5 object-contain" />
+              </Link>
+
               <motion.div
-                className="shrink-0"
+                className="shrink-0 hidden lg:block"
                 initial={false}
                 animate={{ width: scrolled ? 168 : 0 }}
                 transition={{ duration: LOGO_DURATION, ease: EASE }}
@@ -214,44 +221,54 @@ export function Navbar() {
               <GradientButton href="/contact">Contact Us</GradientButton>
             </div>
 
-            {/* Mobile hamburger */}
-            <Sheet>
-              <SheetTrigger
-                render={
-                  <button className="lg:hidden text-white/80 hover:text-white transition-colors" />
-                }
+            {/* Mobile — search + hamburger */}
+            <div className="flex items-center gap-4 lg:hidden">
+              <button
+                onClick={() => setSearchOpen((v) => !v)}
+                className="focus:outline-none text-white/80 hover:text-white transition-colors duration-150"
+                aria-label="Search"
               >
-                <Menu className="h-5 w-5" />
-              </SheetTrigger>
-              <SheetContent
-                side="right"
-                className="w-72 border-white/10"
-                style={{ background: "#201D1D" }}
-              >
-                <div className="flex flex-col gap-1 mt-6 px-2">
-                  <Link href="/" className="mb-4">
-                    <Image src={logo} alt="Rotex" height={28} className="w-36 h-8 object-contain" />
-                  </Link>
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="flex items-center justify-between px-2 py-3 text-sm font-medium font-montserrat text-white/75 hover:text-white hover:bg-white/5 rounded-md transition-colors"
-                    >
-                      {item.label}
-                      {item.hasDropdown && (
-                        <IoChevronDownOutline size={14} className="text-white/60" />
-                      )}
+                <IoSearchOutline size={22} />
+              </button>
+
+              <Sheet>
+                <SheetTrigger
+                  render={
+                    <button className="text-white/80 hover:text-white transition-colors" />
+                  }
+                >
+                  <Menu className="h-5 w-5" />
+                </SheetTrigger>
+                <SheetContent
+                  side="right"
+                  className="w-72 border-white/10"
+                  style={{ background: "#201D1D" }}
+                >
+                  <div className="flex flex-col gap-1 mt-6 px-2">
+                    <Link href="/" className="mb-4">
+                      <Image src={logo} alt="Rotex" height={28} className="w-36 h-8 object-contain" />
                     </Link>
-                  ))}
-                  <div className="mt-4">
-                    <GradientButton href="/contact" className="w-full">
-                      Contact Us
-                    </GradientButton>
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="flex items-center justify-between px-2 py-3 text-sm font-medium font-montserrat text-white/75 hover:text-white hover:bg-white/5 rounded-md transition-colors"
+                      >
+                        {item.label}
+                        {item.hasDropdown && (
+                          <IoChevronDownOutline size={14} className="text-white/60" />
+                        )}
+                      </Link>
+                    ))}
+                    <div className="mt-4">
+                      <GradientButton href="/contact" className="w-full">
+                        Contact Us
+                      </GradientButton>
+                    </div>
                   </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+                </SheetContent>
+              </Sheet>
+            </div>
         </div>
 
         {searchOpen && (
