@@ -3,58 +3,57 @@ import { useRef } from "react";
 import Link from "next/link";
 import { ProductCard } from "@/components/ui/product-card";
 import { RotexArrow } from "@/components/ui/rotex-arrow";
+import product1 from "@/assets/Images/products/product_1.png";
+import product2 from "@/assets/Images/products/product_2.png";
+import product3 from "@/assets/Images/products/product_3.png";
+import product4 from "@/assets/Images/products/product_4.png";
+
+const productImages = [product1, product2, product3, product4];
 
 const products = [
   {
     id: "solenoid-valve",
     name: "Solenoid Valve",
     description: "The Component Inside Valves That Cannot Fail",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=80",
     href: "/products/solenoid-valve",
   },
   {
     id: "angle-seat-valve",
     name: "Angle Seat Valve",
     description: "Durable flow control for demanding needs",
-    image: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=300&q=80",
     href: "/products/angle-seat-valve",
   },
   {
     id: "actuators",
     name: "Actuators",
     description: "Powerful mechanical devices for valve movement",
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&q=80",
     href: "/products/actuators",
   },
   {
     id: "positioners",
     name: "Positioners",
     description: "Precise, digital control for valve positioning",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&q=80",
     href: "/products/positioners",
   },
   {
     id: "controllers",
     name: "Controllers",
     description: "Smart process control for industrial systems",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300&q=80",
     href: "/products/controllers",
   },
   {
     id: "sensors",
     name: "Sensors",
     description: "Accurate measurement for critical processes",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&q=80",
     href: "/products/sensors",
   },
   {
     id: "automation",
     name: "Automation Systems",
     description: "End-to-end automation for flow operations",
-    image: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=300&q=80",
     href: "/products/automation",
   },
-];
+].map((product, i) => ({ ...product, image: productImages[i % productImages.length] }));
 
 const SCROLL_AMOUNT = 308; // card width (288) + gap (20)
 

@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(node __check_stories.mjs)",
-      "Bash(node __check_footer.mjs)"
+      "Bash(node __check_footer.mjs)",
+      "Bash(curl -s http://localhost:3000 -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(cd \"/d/Yash/Projects/rotex-web\" && file src/assets/Images/products/*.png)",
+      "Read(//d/d/Yash/Projects/rotex-web/src/assets/Images/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{content_type}\\\\n\" \"http://localhost:3000/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fproduct_1.00k0ka4_vwdor.png&w=750&q=75\")",
+      "Bash(curl -s \"http://localhost:3000/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fproduct_1.00k0ka4_vwdor.png&w=750&q=75\" -o __product1.png)",
+      "Bash(cd \"/d/Yash/Projects/rotex-web\" && rm -f __check_products*.mjs __check_img.mjs __products*.png __product1*.png)"
+    ],
+    "additionalDirectories": [
+      "D:\\Yash\\Projects\\rotex-web"
     ]
   }
 }

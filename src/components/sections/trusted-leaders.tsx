@@ -1,6 +1,13 @@
 import type { StaticImageData } from "next/image";
-import logo from "@/assets/logo.svg";
 import { ImageView } from "@/components/ui/image-view";
+import partner1 from "@/assets/Images/trustPartners/img_1.png";
+import partner2 from "@/assets/Images/trustPartners/img_2.png";
+import partner3 from "@/assets/Images/trustPartners/img_3.png";
+import partner4 from "@/assets/Images/trustPartners/img_4.png";
+import partner5 from "@/assets/Images/trustPartners/img_5.png";
+import partner6 from "@/assets/Images/trustPartners/img_6.png";
+import partner7 from "@/assets/Images/trustPartners/img_7.png";
+import partner8 from "@/assets/Images/trustPartners/img_8.png";
 
 type LogoItem = { id: number; src: string | StaticImageData; alt: string };
 
@@ -11,13 +18,14 @@ type TrustedLeadersProps = {
 };
 
 const defaultLogos: LogoItem[] = [
-  { id: 0, src: logo, alt: "Partner" },
-  { id: 1, src: logo, alt: "Partner" },
-  { id: 2, src: logo, alt: "Partner" },
-  { id: 3, src: logo, alt: "Partner" },
-  { id: 4, src: logo, alt: "Partner" },
-  { id: 5, src: logo, alt: "Partner" },
-  { id: 6, src: logo, alt: "Partner" },
+  { id: 0, src: partner1, alt: "Partner" },
+  { id: 1, src: partner2, alt: "Partner" },
+  { id: 2, src: partner3, alt: "Partner" },
+  { id: 3, src: partner4, alt: "Partner" },
+  { id: 4, src: partner5, alt: "Partner" },
+  { id: 5, src: partner6, alt: "Partner" },
+  { id: 6, src: partner7, alt: "Partner" },
+  { id: 7, src: partner8, alt: "Partner" },
 ];
 
 export function TrustedLeaders({
@@ -31,11 +39,11 @@ export function TrustedLeaders({
 
         {/* Label */}
         {primary ? (
-          <p className="text-gradient-orange-dark self-stretch text-center lg:text-left text-base lg:text-2xl font-montserrat font-normal leading-6 lg:leading-8 lg:whitespace-nowrap shrink-0">
+          <p className="text-gradient-orange-dark self-stretch lg:self-auto text-center lg:text-left text-base lg:text-2xl font-montserrat font-normal leading-6 lg:leading-8 lg:whitespace-nowrap shrink-0">
             {title}
           </p>
         ) : (
-          <p className="text-stone-500 self-stretch text-center lg:text-left text-base lg:text-xl font-montserrat font-medium leading-6 lg:leading-7 lg:whitespace-nowrap shrink-0">
+          <p className="text-stone-500 self-stretch lg:self-auto text-center lg:text-left text-base lg:text-xl font-montserrat font-medium leading-6 lg:leading-7 lg:whitespace-nowrap shrink-0">
             {title}
           </p>
         )}
@@ -58,7 +66,7 @@ export function TrustedLeaders({
                     alt={alt}
                     width={96}
                     height={64}
-                    className="grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-200"
+                    className="object-contain"
                   />
                 </div>
               ))}
@@ -78,7 +86,7 @@ export function TrustedLeaders({
                     alt={alt}
                     width={80}
                     height={28}
-                    className="grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-200"
+                    className="object-contain"
                   />
                 </div>
               ))}

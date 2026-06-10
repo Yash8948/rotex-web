@@ -28,7 +28,8 @@ export function ProductCard({ name, description, image, href, className }: Produ
           src={image}
           alt={name}
           fill
-          className="object-cover object-center"
+          containerClassName="w-full h-full"
+          className="object-contain object-center"
         />
       </div>
 
