@@ -1,191 +1,266 @@
 "use client";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { IoChevronForwardOutline, IoChevronBackOutline } from "react-icons/io5";
+import type { StaticImageData } from "next/image";
+import { cn } from "@/lib/utils";
+import { ProductListCard } from "@/components/ui/product-list-card";
+import { FilterCombobox } from "@/components/ui/filter-combobox";
+import { PageHero } from "@/components/ui/page-hero";
+import breadcrumbBg from "@/assets/Images/breadcurmbBackgrounds/default_bg.jpg";
+import product1 from "@/assets/Images/products/product_1.png";
+import product2 from "@/assets/Images/products/product_2.png";
+import product3 from "@/assets/Images/products/product_3.png";
+import product4 from "@/assets/Images/products/product_4.png";
 
-const categories = ["All", "Rotary Valves", "Airlocks", "Conveyors", "Monitoring"];
+// ── Types ────────────────────────────────────────────────────────────────────
 
-const products = [
-  {
-    name: "RX-500 Rotary Valve",
-    category: "Rotary Valves",
-    desc: "Heavy-duty rotary valve for bulk material handling in demanding environments.",
-    specs: ["Capacity: 500 L/min", "Pressure: 10 bar", "Temp range: -20°C to 250°C"],
-    badge: "Best Seller",
-  },
-  {
-    name: "RX-200 Airlock",
-    category: "Airlocks",
-    desc: "Precision airlock for pneumatic conveying systems requiring tight pressure sealing.",
-    specs: ["Capacity: 200 L/min", "Pressure: 6 bar", "IP65 rated"],
-    badge: "New",
-  },
-  {
-    name: "FlexConvey Pro",
-    category: "Conveyors",
-    desc: "Flexible screw conveyor designed for free-flowing and non-free-flowing materials.",
-    specs: ["Length: up to 12m", "Diameter: 50–150mm", "Variable speed"],
-    badge: null,
-  },
-  {
-    name: "SentinelIQ Monitor",
-    category: "Monitoring",
-    desc: "IoT monitoring unit with real-time dashboards, alerts and predictive maintenance AI.",
-    specs: ["Wi-Fi & LTE", "8 sensor inputs", "Cloud dashboard"],
-    badge: "New",
-  },
-  {
-    name: "RX-1000 Industrial Valve",
-    category: "Rotary Valves",
-    desc: "Our largest rotary valve, engineered for high-volume industrial applications.",
-    specs: ["Capacity: 1000 L/min", "Pressure: 16 bar", "Stainless steel body"],
-    badge: null,
-  },
-  {
-    name: "AirLock Micro",
-    category: "Airlocks",
-    desc: "Compact airlock for laboratory and small-scale processing applications.",
-    specs: ["Capacity: 20 L/min", "Pressure: 3 bar", "Sanitary design"],
-    badge: null,
-  },
+type Product = {
+  slug: string;
+  code: string;
+  name: string;
+  category: string;
+  image: StaticImageData;
+  tags: string[];
+};
+
+// ── Dummy data ────────────────────────────────────────────────────────────────
+
+const productImages = [product1, product2, product3, product4];
+
+const ALL_PRODUCTS: Product[] = [
+  { slug: "pneumatic-scotch-yoke-actuator-20101",   code: "20101", name: "Pneumatic Scotch Yoke Actuator", category: "Actuators",        image: product3, tags: [] },
+  { slug: "direct-acting-solenoid-valve-20101",     code: "20101", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product1, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20102",     code: "20102", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product2, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20103",     code: "20103", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product4, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20104",     code: "20104", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product1, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20105",     code: "20105", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product2, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20106",     code: "20106", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product3, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20107",     code: "20107", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product4, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20108",     code: "20108", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product1, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20109",     code: "20109", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product2, tags: ["2 Way", "Normally Close"] },
+  { slug: "direct-acting-solenoid-valve-20110",     code: "20110", name: "Direct Acting Solenoid Valve",   category: "Solenoid Valve",   image: product3, tags: ["2 Way", "Normally Close"] },
+  { slug: "angle-seat-valve-20201",                 code: "20201", name: "Angle Seat Valve",               category: "Angle Seat Valve", image: product4, tags: ["2 Way", "Normally Open"] },
 ];
 
-export default function ProductsPage() {
+const TABS = ["All Products", "Solenoid Valve", "Angle Seat Valve", "Actuators", "Positioners", "Automotive Solutions"];
+
+// ── Filter config ─────────────────────────────────────────────────────────────
+
+const FILTER_PILLS: { key: string; label: string; options: string[] }[] = [
+  { key: "subType",       label: "Sub-type",      options: ["Standard", "Special", "Namur", "Pulse", "Gas", "Pneumatic", "Magnet"] },
+  { key: "operatingType", label: "Operating Type", options: ["Direct Acting", "Pilot Operated", "External Pilot Operated", "Air Operated"] },
+  { key: "actionType",    label: "Action Type",    options: ["Normally Close", "Normally Open", "Universal"] },
+];
+
+const FILTER_SELECTS: { key: string; label: string; placeholder: string; options: string[] }[] = [
+  { key: "portSize",    label: "Port Size",          placeholder: "Select Port Size",         options: ['1/8"', '1/4"', '3/8"', '1/2"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"'] },
+  { key: "minPressure", label: "Min Pressure (Bar)", placeholder: "Select Min. Pressure Bar", options: ["0", "0.5", "1", "2", "3", "5"] },
+  { key: "maxPressure", label: "Max Pressure (Bar)", placeholder: "Select Max. Pressure Bar", options: ["5", "10", "16", "25", "40", "63"] },
+  { key: "operatorSize",label: "Operator Size",      placeholder: "Select Operator Size",     options: ["DN15", "DN20", "DN25", "DN32", "DN40", "DN50", "DN65", "DN80"] },
+];
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function FilterPill({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
-    <div className="pt-16">
-      {/* Hero */}
-      <section className="py-24 bg-gradient-to-br from-zinc-50 to-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <Badge variant="secondary" className="mb-4">
-              Product Range
-            </Badge>
-            <h1 className="text-5xl font-bold text-zinc-900 mb-6">
-              Industrial Equipment Built to Last
-            </h1>
-            <p className="text-lg text-zinc-600 leading-relaxed">
-              Explore our comprehensive range of rotary valves, airlocks,
-              conveyors, and smart monitoring systems — all engineered for
-              maximum reliability and efficiency.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+    <button
+      onClick={onClick}
+      className={cn(
+        "px-3 py-1.5 rounded-full text-xs font-medium font-montserrat leading-4 transition-colors duration-200",
+        selected
+          ? "bg-zinc-800 text-white"
+          : "ring-1 ring-inset ring-neutral-200 text-stone-900 hover:bg-stone-50"
+      )}
+    >
+      {label}
+    </button>
+  );
+}
 
-      {/* Filter pills */}
-      <section className="py-8 bg-white border-b border-zinc-100">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {categories.map((cat, i) => (
-              <motion.div
-                key={cat}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Badge
-                  variant={cat === "All" ? "default" : "outline"}
-                  className="cursor-pointer px-4 py-1.5 text-sm"
+function FilterSidebar({
+  pillState,
+  onPillToggle,
+  selectState,
+  onSelectChange,
+}: {
+  pillState: Record<string, string[]>;
+  onPillToggle: (key: string, value: string) => void;
+  selectState: Record<string, string[]>;
+  onSelectChange: (key: string, value: string[]) => void;
+}) {
+  return (
+    <aside className="w-80 shrink-0 flex flex-col gap-7 sticky top-24 self-start pt-3">
+      {/* Pill filter groups */}
+      {FILTER_PILLS.map(({ key, label, options }) => (
+        <div key={key} className="flex flex-col gap-3">
+          <p className="text-stone-500 text-xs font-semibold font-montserrat uppercase leading-4 tracking-wide">
+            {label}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {options.map((opt) => (
+              <FilterPill
+                key={opt}
+                label={opt}
+                selected={pillState[key]?.includes(opt) ?? false}
+                onClick={() => onPillToggle(key, opt)}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Combobox (searchable) filters */}
+      {FILTER_SELECTS.map((s) => (
+        <FilterCombobox
+          key={s.key}
+          label={s.label}
+          placeholder={s.placeholder}
+          options={s.options}
+          value={selectState[s.key] ?? []}
+          onChange={(val) => onSelectChange(s.key, val)}
+        />
+      ))}
+    </aside>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default function ProductsPage() {
+  const [activeTab, setActiveTab] = useState("All Products");
+  const [pillState, setPillState] = useState<Record<string, string[]>>({
+    subType: ["Standard"],
+    operatingType: ["Direct Acting"],
+    actionType: ["Normally Close"],
+  });
+  const [selectState, setSelectState] = useState<Record<string, string[]>>({
+    portSize: [], minPressure: [], maxPressure: [], operatorSize: [],
+  });
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    const ro = new ResizeObserver(updateScrollState);
+    ro.observe(el);
+    return () => { el.removeEventListener("scroll", updateScrollState); ro.disconnect(); };
+  }, [updateScrollState]);
+
+  const handlePillToggle = (key: string, value: string) => {
+    setPillState((prev) => {
+      const current = prev[key] ?? [];
+      return {
+        ...prev,
+        [key]: current.includes(value) ? current.filter((v) => v !== value) : [...current, value],
+      };
+    });
+  };
+
+  const filteredProducts =
+    activeTab === "All Products"
+      ? ALL_PRODUCTS
+      : ALL_PRODUCTS.filter((p) => p.category === activeTab);
+
+  const scrollTabs = (dir: "left" | "right") => {
+    tabsRef.current?.scrollBy({ left: dir === "right" ? 200 : -200, behavior: "smooth" });
+  };
+
+  return (
+    <div>
+      <PageHero
+        bg={breadcrumbBg}
+        title="All Products"
+        description="Precision on–off control engineered by Rotex for safety-critical and high-duty industrial environments."
+      />
+
+      <div className="container flex gap-8 py-12 items-start">
+        {/* Sidebar */}
+        <FilterSidebar
+          pillState={pillState}
+          onPillToggle={handlePillToggle}
+          selectState={selectState}
+          onSelectChange={(key, val) => setSelectState((prev) => ({ ...prev, [key]: val } as Record<string, string[]>))}
+        />
+
+        {/* Main content */}
+        <div className="flex-1 min-w-0 flex flex-col gap-6">
+
+          {/* Category tabs — sticky below navbar */}
+          <div className="sticky top-24 z-30 bg-white border-b border-stone-200 pt-3">
+            <div
+              ref={tabsRef}
+              className="no-scrollbar flex gap-5 overflow-x-auto"
+              style={{ scrollbarWidth: "none" }}
+            >
+              {TABS.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={cn(
+                    "shrink-0 px-2.5 py-6 border-b-2 -mb-px text-lg font-semibold font-montserrat leading-5 whitespace-nowrap transition-colors duration-150",
+                    tab === activeTab
+                      ? "border-red-600 text-red-600"
+                      : "border-transparent text-stone-900 hover:text-red-600"
+                  )}
                 >
-                  {cat}
-                </Badge>
-              </motion.div>
-            ))}
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            {/* Left fade + prev button */}
+            {canScrollLeft && (
+              <>
+                <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+                <button
+                  onClick={() => scrollTabs("left")}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 size-6 flex items-center justify-center text-stone-900 hover:text-red-600 transition-colors"
+                  aria-label="Previous tabs"
+                >
+                  <IoChevronBackOutline size={18} />
+                </button>
+              </>
+            )}
+
+            {/* Right fade + next button */}
+            {canScrollRight && (
+              <>
+                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+                <button
+                  onClick={() => scrollTabs("right")}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 size-6 flex items-center justify-center text-stone-900 hover:text-red-600 transition-colors"
+                  aria-label="Next tabs"
+                >
+                  <IoChevronForwardOutline size={18} />
+                </button>
+              </>
+            )}
           </div>
+
+          {/* Products grid */}
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-3 gap-5 relative z-0">
+              {filteredProducts.map((product) => (
+                <ProductListCard key={product.slug} {...product} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-stone-400 text-center py-20">No products found.</p>
+          )}
+
         </div>
-      </section>
-
-      {/* Products grid */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product, index) => (
-              <motion.div
-                key={product.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className="h-full hover:shadow-md transition-shadow duration-300">
-                  <CardContent className="p-6 flex flex-col h-full">
-                    {/* Product image placeholder */}
-                    <div className="w-full h-40 rounded-lg bg-zinc-100 flex items-center justify-center mb-4">
-                      <span className="text-zinc-400 text-sm">Product Image</span>
-                    </div>
-
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="text-base font-semibold text-zinc-900">
-                        {product.name}
-                      </h3>
-                      {product.badge && (
-                        <Badge
-                          variant={product.badge === "New" ? "default" : "secondary"}
-                          className="shrink-0 text-xs"
-                        >
-                          {product.badge}
-                        </Badge>
-                      )}
-                    </div>
-
-                    <p className="text-xs text-zinc-500 mb-2">{product.category}</p>
-                    <p className="text-sm text-zinc-600 leading-relaxed mb-4 flex-1">
-                      {product.desc}
-                    </p>
-
-                    <ul className="space-y-1 mb-4">
-                      {product.specs.map((spec) => (
-                        <li key={spec} className="text-xs text-zinc-500 flex items-center gap-2">
-                          <span className="w-1 h-1 rounded-full bg-zinc-400 shrink-0" />
-                          {spec}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Link href="/contact">
-                      <Button variant="outline" size="sm" className="w-full">
-                        Request Quote
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 bg-zinc-900">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Need a custom solution?
-            </h2>
-            <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
-              We design and build bespoke equipment tailored to your exact
-              specifications and operating environment.
-            </p>
-            <Link href="/contact">
-              <Button size="lg" variant="secondary" className="h-12 px-8">
-                Enquire About Custom Build
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }

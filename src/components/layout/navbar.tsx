@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { GradientButton } from "@/components/ui/gradient-button";
 import { Menu } from "lucide-react";
@@ -75,6 +76,7 @@ const navItems: NavItem[] = [
 function NavDropdownItem({ item }: { item: NavItem }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -84,12 +86,23 @@ function NavDropdownItem({ item }: { item: NavItem }) {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
+  const handleMouseEnter = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    if (item.hasDropdown) setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (item.hasDropdown) {
+      closeTimer.current = setTimeout(() => setOpen(false), 120);
+    }
+  };
+
   return (
     <div
       ref={ref}
       className="relative"
-      onMouseEnter={() => item.hasDropdown && setOpen(true)}
-      onMouseLeave={() => item.hasDropdown && setOpen(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <Link href={item.href} className="flex items-center gap-0.5 group">
         <span className="text-stone-300 text-sm font-medium font-montserrat whitespace-nowrap group-hover:text-white transition-colors duration-150">
@@ -174,34 +187,43 @@ function FloatingLogo({ scrolled }: { scrolled: boolean }) {
 export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const scrolled = useScrolled(60);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   return (
     <>
-      {/* Single logo that slides between hero and navbar positions */}
-      <FloatingLogo scrolled={scrolled} />
+      {/* Animated floating logo — home page only */}
+      {isHome && <FloatingLogo scrolled={scrolled} />}
 
       <motion.header
         className="fixed top-0 left-0 right-0 z-50"
         initial={false}
-        animate={{ backgroundColor: scrolled ? "#201D1D" : "rgba(13,13,13,0)" }}
+        animate={{ backgroundColor: (!isHome || scrolled) ? "#201D1D" : "rgba(13,13,13,0)" }}
         transition={{ duration: DURATION, ease: EASE }}
       >
         <div className="container h-20 lg:h-24 flex items-center justify-between">
 
-            {/* LEFT — spacer width = logo(144) + gap(24) when scrolled, 0 when not.
-                Nav items start right after spacer so they align with logo's left edge at rest. */}
             <div className="flex items-center">
-              {/* Mobile: static logo, no swipe-up animation/space reservation */}
+              {/* Mobile: static logo always */}
               <Link href="/" className="lg:hidden">
                 <Image src={logo} alt="Rotex" width={96} height={20} className="w-24 h-5 object-contain" />
               </Link>
 
-              <motion.div
-                className="shrink-0 hidden lg:block"
-                initial={false}
-                animate={{ width: scrolled ? 168 : 0 }}
-                transition={{ duration: LOGO_DURATION, ease: EASE }}
-              />
+              {isHome ? (
+                /* Home — animated spacer reserves room for the FloatingLogo */
+                <motion.div
+                  className="shrink-0 hidden lg:block"
+                  initial={false}
+                  animate={{ width: scrolled ? 168 : 0 }}
+                  transition={{ duration: LOGO_DURATION, ease: EASE }}
+                />
+              ) : (
+                /* Other pages — static logo in the header */
+                <Link href="/" className="hidden lg:flex items-center mr-6">
+                  <Image src={logo} alt="Rotex" width={144} height={31} className="w-36 h-8 object-contain" />
+                </Link>
+              )}
+
               <div className="hidden lg:flex items-center gap-6">
                 {navItems.map((item) => (
                   <NavDropdownItem key={item.href} item={item} />

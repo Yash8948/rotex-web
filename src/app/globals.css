@@ -197,10 +197,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
+    @apply bg-background text-foreground overflow-x-clip;
   }
   html {
-    @apply font-montserrat overflow-x-hidden;
+    @apply font-montserrat overflow-x-clip;
   }
   button,
   [role="button"],
@@ -209,6 +209,13 @@
   select {
     @apply cursor-pointer;
   }
+}
+
+@utility text-gradient-orange-dark {
+  background: linear-gradient(to right, #ff9a00 0%, #f03900 40%, #950000 75%, #201d1d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ── Typography utility classes ── */
@@ -272,6 +279,8 @@
 
 /* ── Hide scrollbar utility ── */
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+
 
 /* ── Container-aligned left padding (matches container breakpoints exactly) ── */
 .container-left-pad {
