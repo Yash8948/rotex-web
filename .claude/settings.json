@@ -19,11 +19,13 @@
       "Bash(npx tsc *)",
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(p.dependencies['swiper'] || 'not installed'\\)\")",
       "Bash(node -e ' *)",
-      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('zod:', p.dependencies['zod']||'no'\\); console.log\\('rhf:', p.dependencies['react-hook-form']||'no'\\); console.log\\('resolvers:', p.dependencies['@hookform/resolvers']||'no'\\)\")"
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('zod:', p.dependencies['zod']||'no'\\); console.log\\('rhf:', p.dependencies['react-hook-form']||'no'\\); console.log\\('resolvers:', p.dependencies['@hookform/resolvers']||'no'\\)\")",
+      "Bash(mkdir -p \"d:/Yash/Projects/rotex-web/src/app/industries/[sector]/[sub]\")"
     ],
     "additionalDirectories": [
       "D:\\Yash\\Projects\\rotex-web",
-      "d:\\Yash\\Projects\\rotex-web\\src\\app\\industries"
+      "d:\\Yash\\Projects\\rotex-web\\src\\app\\industries",
+      "d:\\Yash\\Projects\\rotex-web\\src\\app\\industries\\[sector]"
     ]
   }
 }

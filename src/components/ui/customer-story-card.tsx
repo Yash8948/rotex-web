@@ -1,16 +1,20 @@
 import { ImageView } from "@/components/ui/image-view";
+import { VideoPlayer } from "@/components/ui/video-player";
 import { cn } from "@/lib/utils";
-import type { StaticImageData } from "next/image";
+
+type Media =
+  | { type: "image"; src: string }
+  | { type: "video"; src: string };
 
 type CustomerStoryCardProps = {
-  image: string | StaticImageData;
+  media: Media;
   quote: string;
   author: string;
   company: string;
   className?: string;
 };
 
-export function CustomerStoryCard({ image, quote, author, company, className }: CustomerStoryCardProps) {
+export function CustomerStoryCard({ media, quote, author, company, className }: CustomerStoryCardProps) {
   return (
     <div
       className={cn(
@@ -18,15 +22,23 @@ export function CustomerStoryCard({ image, quote, author, company, className }: 
         className
       )}
     >
-      {/* Image */}
+      {/* Media — image or video */}
       <div className="h-48 lg:h-80 lg:rounded-lg rounded-tl-2xl rounded-tr-2xl border border-neutral-200 lg:border-0 overflow-hidden shrink-0">
-        <ImageView
-          fill
-          src={image}
-          alt={author}
-          containerClassName="w-full h-full"
-          className="object-cover"
-        />
+        {media.type === "video" ? (
+          <VideoPlayer
+            src={media.src}
+            variant="light"
+            containerClassName="w-full h-full"
+          />
+        ) : (
+          <ImageView
+            fill
+            src={media.src}
+            alt={author}
+            containerClassName="w-full h-full"
+            className="object-cover"
+          />
+        )}
       </div>
 
       {/* Quote + author */}

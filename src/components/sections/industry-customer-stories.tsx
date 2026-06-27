@@ -42,7 +42,7 @@ export function IndustryCustomerStories({ stories }: Props) {
           {stories.map((story, i) => (
             <SwiperSlide key={i} className="!w-[85vw] lg:!w-[578px]">
               <CustomerStoryCard
-                image={story.image}
+                media={{ type: "image", src: story.image }}
                 quote={story.quote}
                 author={story.author}
                 company={story.company}
