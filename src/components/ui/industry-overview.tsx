@@ -1,0 +1,97 @@
+"use client";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
+import type { IndustryStat } from "@/data/industries";
+
+function AnimatedCounter({ value, suffix }: { value: string; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const numeric = parseInt(value.replace(/\D/g, ""), 10) || 0;
+
+  const count = useMotionValue(0);
+  const spring = useSpring(count, { stiffness: 60, damping: 20, restDelta: 0.5 });
+  const rounded = useTransform(spring, (v) => Math.round(v).toString());
+
+  useEffect(() => {
+    if (isInView) count.set(numeric);
+  }, [isInView, count, numeric]);
+
+  return (
+    <span ref={ref} className="text-black text-4xl lg:text-6xl font-normal font-montserrat leading-tight lg:leading-14.25">
+      <motion.span>{rounded}</motion.span>
+      {suffix && <span className="text-red-600">{suffix}</span>}
+    </span>
+  );
+}
+
+type IndustryOverviewProps = {
+  sectionTitle: string;
+  overview: string;
+  stats: IndustryStat[];
+};
+
+export function IndustryOverview({ sectionTitle, overview, stats }: IndustryOverviewProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <section className="border-b border-stone-200">
+      <div className="container py-10 lg:py-14 flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-16">
+
+        {/* Title + body + read more */}
+        <div className="flex-1 flex flex-col gap-4">
+          <h2 className="text-stone-900 text-2xl lg:text-4xl font-normal font-montserrat leading-8 lg:leading-10">
+            {sectionTitle}
+          </h2>
+
+          <div className="flex flex-col gap-1.5">
+            <motion.div
+              initial={false}
+              animate={{ height: expanded ? "auto" : "4.5rem" }}
+              transition={{ duration: 0.45, ease: [0.04, 0.62, 0.23, 0.98] }}
+              className="overflow-hidden"
+            >
+              <p className="text-zinc-800 text-sm lg:text-base font-medium font-montserrat leading-5 lg:leading-6">
+                {overview}
+              </p>
+            </motion.div>
+
+            <motion.button
+              onClick={() => setExpanded((e) => !e)}
+              className="text-left text-neutral-400 text-sm lg:text-lg font-medium font-montserrat leading-5 lg:leading-6 hover:text-neutral-600 transition-colors duration-150"
+              whileTap={{ scale: 0.97 }}
+            >
+              <motion.span
+                key={expanded ? "less" : "more"}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {expanded ? "Read less" : "Read more"}
+              </motion.span>
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="shrink-0 flex items-start gap-7 lg:gap-12">
+          {stats.map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              className="flex flex-col gap-1.5 lg:gap-4 items-center lg:items-start"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.5, delay: i * 0.15 }}
+            >
+              <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+              <p className="text-zinc-900 text-xs lg:text-sm font-medium font-montserrat uppercase leading-4 lg:leading-5 text-center lg:text-left">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+  );
+}

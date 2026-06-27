@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { StaticImageData } from "next/image";
 import { PageHero } from "@/components/ui/page-hero";
+import { IndustryOverview } from "@/components/ui/industry-overview";
+import { IndustrySubSection } from "@/components/sections/industry-sub-section";
 import { INDUSTRIES } from "@/data/industries";
 
 import oilBg        from "@/assets/Images/breadcurmbBackgrounds/oil_bg.jpg";
@@ -12,17 +14,15 @@ import aerospaceBg  from "@/assets/Images/breadcurmbBackgrounds/aerospace_bg.jpg
 import machineBg    from "@/assets/Images/breadcurmbBackgrounds/machine_bg.jpg";
 
 const BG_MAP: Record<string, StaticImageData> = {
-  oil:       oilBg,
-  power:     powerBg,
+  oil:        oilBg,
+  power:      powerBg,
   automative: automativeBg,
-  rail:      railBg,
-  aerospace: aerospaceBg,
-  machine:   machineBg,
+  rail:       railBg,
+  aerospace:  aerospaceBg,
+  machine:    machineBg,
 };
 
-type Props = {
-  params: Promise<{ sector: string }>;
-};
+type Props = { params: Promise<{ sector: string }> };
 
 export async function generateStaticParams() {
   return INDUSTRIES.map((i) => ({ sector: i.slug }));
@@ -37,6 +37,7 @@ export default async function IndustryPage({ params }: Props) {
 
   return (
     <div>
+      {/* Hero */}
       <PageHero title={industry.name} description={industry.description} bg={bg}>
         <div className="flex flex-wrap gap-5">
           <Link
@@ -54,10 +55,20 @@ export default async function IndustryPage({ params }: Props) {
         </div>
       </PageHero>
 
-      {/* Page body */}
-      <div className="container py-16">
-        <p className="text-stone-400 text-sm">Industry page content coming soon.</p>
-      </div>
+      {/* Overview + animated stats */}
+      <IndustryOverview
+        sectionTitle={industry.sectionTitle}
+        overview={industry.overview}
+        stats={industry.stats}
+      />
+
+      {/* Sub-industry tabs + challenges/solutions + why choose + form */}
+      <IndustrySubSection
+        industryName={industry.name}
+        subIndustries={industry.subIndustries}
+        whyChoose={industry.whyChoose}
+        bg={bg}
+      />
     </div>
   );
 }
