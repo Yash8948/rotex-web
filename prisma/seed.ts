@@ -1,0 +1,27 @@
+import bcrypt from "bcryptjs";
+import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
+
+async function main() {
+  const email = process.env.SEED_ADMIN_EMAIL ?? "admin@rotex.com";
+  const password = process.env.SEED_ADMIN_PASSWORD ?? "changeme123";
+  const hash = await bcrypt.hash(password, 10);
+
+  await prisma.adminUser.upsert({
+    where: { email },
+    update: {},
+    create: { email, password: hash, name: "Admin" },
+  });
+
+  console.log(`Admin user ready: ${email}`);
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => prisma.$disconnect());

@@ -1,0 +1,80 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { SectionRow } from "@/components/admin/section-row";
+import { Button } from "@/components/ui/button";
+import { reorderHomeSections } from "@/app/admin/(dashboard)/home/actions";
+
+type Section = { key: string; enabled: boolean };
+
+export function SortableSectionList({ sections }: { sections: Section[] }) {
+  const [items, setItems] = useState(sections);
+  const [pending, startTransition] = useTransition();
+  const [saved, setSaved] = useState(false);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+
+  const isDirty = items.some((s, i) => s.key !== sections[i].key);
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setSaved(false);
+    setItems((current) => {
+      const oldIndex = current.findIndex((s) => s.key === active.id);
+      const newIndex = current.findIndex((s) => s.key === over.id);
+      return arrayMove(current, oldIndex, newIndex);
+    });
+  }
+
+  function handleSave() {
+    startTransition(async () => {
+      await reorderHomeSections(items.map((s) => s.key));
+      setSaved(true);
+    });
+  }
+
+  function handleReset() {
+    setItems(sections);
+    setSaved(false);
+  }
+
+  return (
+    <div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={items.map((s) => s.key)} strategy={verticalListSortingStrategy}>
+          <div className="divide-y divide-border">
+            {items.map((section) => (
+              <SectionRow key={section.key} sectionKey={section.key} enabled={section.enabled} />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+
+      {isDirty && (
+        <div className="flex items-center gap-3 border-t border-border p-4">
+          <Button size="sm" onClick={handleSave} disabled={pending}>
+            {pending ? "Saving..." : "Save Order"}
+          </Button>
+          <Button size="sm" variant="outline" onClick={handleReset} disabled={pending}>
+            Reset Order
+          </Button>
+          {saved && <span className="text-sm text-green-600">Saved.</span>}
+        </div>
+      )}
+    </div>
+  );
+}

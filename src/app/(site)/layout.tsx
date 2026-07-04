@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { PageLoader } from "@/components/ui/page-loader";
@@ -16,11 +16,7 @@ export const metadata: Metadata = {
   description: "Leading provider of industrial rotary solutions and equipment",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${montserrat.variable} font-montserrat`} suppressHydrationWarning>

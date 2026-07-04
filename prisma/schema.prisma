@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id       String   @id @default(cuid())
+  slug     String   @unique
+  code     String
+  name     String
+  category String
+  image    String
+  tags     String[]
+
+  subType       String?
+  operatingType String?
+  actionType    String?
+  portSize      String?
+  minPressure   String?
+  maxPressure   String?
+  operatorSize  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Industry {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  bgKey         String?
+  description   String
+  sectionTitle  String
+  overview      String
+  stats         Json
+  whyChoose     Json
+
+  subIndustries SubIndustry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SubIndustry {
+  id                  String   @id @default(cuid())
+  slug                String
+  name                String
+  description         String
+  challengesTitle     String
+  solutionsTitle      String
+  solutionsIntro      String
+  challenges          String[]
+  solutions           String[]
+  recommendedProducts String[]
+
+  industry   Industry @relation(fields: [industryId], references: [id], onDelete: Cascade)
+  industryId String
+
+  customerStories CustomerStory[]
+
+  @@unique([industryId, slug])
+}
+
+model GlobalConfig {
+  id        String   @id @default("global")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+model HomeSeo {
+  id        String   @id @default("home")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+model HomeSection {
+  key       String   @id
+  enabled   Boolean  @default(true)
+  order     Int
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+model CustomerStory {
+  id      String @id @default(cuid())
+  quote   String
+  author  String
+  company String
+  image   String
+
+  subIndustry   SubIndustry @relation(fields: [subIndustryId], references: [id], onDelete: Cascade)
+  subIndustryId String
+}
