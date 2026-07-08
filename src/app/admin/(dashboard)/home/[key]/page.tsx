@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Breadcrumb } from "@/components/admin/breadcrumb";
 import { HeroForm } from "@/components/admin/home-sections/hero-form";
 import { LogoMarqueeForm } from "@/components/admin/home-sections/logo-marquee-form";
+import { PartnersPickerForm } from "@/components/admin/home-sections/partners-picker-form";
 import { RedefiningForm } from "@/components/admin/home-sections/redefining-form";
 import { IndustriesForm } from "@/components/admin/home-sections/industries-form";
 import { ProductsForm } from "@/components/admin/home-sections/products-form";
@@ -25,6 +26,15 @@ export default async function AdminHomeSectionPage({
 
   const label = key.replace("-", " ");
 
+  const allPartners =
+    key === "partners"
+      ? await prisma.partner.findMany({
+          where: { published: true },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, name: true, logo: true },
+        })
+      : [];
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -36,7 +46,10 @@ export default async function AdminHomeSectionPage({
       </div>
 
       {key === "hero" && <HeroForm {...meta} initialData={data} />}
-      {(key === "partners" || key === "certifications") && (
+      {key === "partners" && (
+        <PartnersPickerForm {...meta} initialData={data} allPartners={allPartners} />
+      )}
+      {key === "certifications" && (
         <LogoMarqueeForm sectionKey={key} {...meta} initialData={data} />
       )}
       {key === "redefining" && <RedefiningForm {...meta} initialData={data} />}

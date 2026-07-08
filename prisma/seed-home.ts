@@ -117,12 +117,7 @@ const SECTIONS: { key: string; order: number; data: unknown }[] = [
     order: 2,
     data: {
       title: "Trusted by Industry Leaders",
-      logos: [
-        { id: "logo_001", published: true, src: "https://cdn.rotex.com/partners/drreddys.png", alt: "Dr. Reddy's" },
-        { id: "logo_002", published: true, src: "https://cdn.rotex.com/partners/air-liquide.png", alt: "Air Liquide" },
-        { id: "logo_003", published: true, src: "https://cdn.rotex.com/partners/godrej.png", alt: "Godrej" },
-        { id: "logo_004", published: true, src: "https://cdn.rotex.com/partners/linde.png", alt: "Linde" },
-      ],
+      partnerIds: [],
     },
   },
   {

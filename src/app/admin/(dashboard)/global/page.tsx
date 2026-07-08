@@ -17,7 +17,7 @@ export default async function AdminGlobalConfigPage() {
         <Breadcrumb items={[{ label: "Dashboard", href: "/admin" }, { label: "Global Config" }]} />
       </div>
 
-      <GlobalConfigForm initialData={config.data as never} />
+      <GlobalConfigForm initialData={config.data} />
     </div>
   );
 }

@@ -28,15 +28,15 @@ export async function reorderHomeSections(orderedKeys: string[]) {
   revalidatePath("/admin/home");
 }
 
-export async function saveHomeSeo(data: unknown) {
-  await prisma.homeSeo.update({ where: { id: "home" }, data: { data: data as never } });
+export async function saveHomeSeo(data: PrismaJson.HomeSeoData) {
+  await prisma.homeSeo.update({ where: { id: "home" }, data: { data } });
 
   revalidatePath("/admin/home");
   revalidatePath("/admin/home/seo");
 }
 
-export async function saveGlobalConfig(data: unknown) {
-  await prisma.globalConfig.update({ where: { id: "global" }, data: { data: data as never } });
+export async function saveGlobalConfig(data: PrismaJson.GlobalConfigData) {
+  await prisma.globalConfig.update({ where: { id: "global" }, data: { data } });
 
   revalidatePath("/admin/global");
 }

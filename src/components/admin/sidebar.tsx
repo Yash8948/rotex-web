@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Factory, Home, Settings } from "lucide-react";
+import { LayoutDashboard, Package, Factory, Home, Settings, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.svg";
 
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/admin/home", label: "Home Page", icon: Home },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/industries", label: "Industries", icon: Factory },
+  { href: "/admin/partners", label: "Partners", icon: Handshake },
   { href: "/admin/global", label: "Global Config", icon: Settings },
 ];
 

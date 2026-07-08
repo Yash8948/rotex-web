@@ -15,7 +15,7 @@ export default async function AdminHomeSeoPage() {
         <Breadcrumb items={[{ label: "Home Page", href: "/admin/home" }, { label: "SEO" }]} />
       </div>
 
-      <SeoForm initialData={seo.data as never} />
+      <SeoForm initialData={seo.data} />
     </div>
   );
 }

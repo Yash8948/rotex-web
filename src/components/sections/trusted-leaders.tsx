@@ -9,7 +9,7 @@ import partner6 from "@/assets/Images/trustPartners/img_6.png";
 import partner7 from "@/assets/Images/trustPartners/img_7.png";
 import partner8 from "@/assets/Images/trustPartners/img_8.png";
 
-type LogoItem = { id: number; src: string | StaticImageData; alt: string };
+type LogoItem = { id: string | number; src: string | StaticImageData; alt: string };
 
 type TrustedLeadersProps = {
   title?: string;
@@ -67,6 +67,7 @@ export function TrustedLeaders({
                     width={96}
                     height={64}
                     className="object-contain"
+                    unoptimized={typeof src === "string"}
                   />
                 </div>
               ))}
@@ -87,6 +88,7 @@ export function TrustedLeaders({
                     width={80}
                     height={28}
                     className="object-contain"
+                    unoptimized={typeof src === "string"}
                   />
                 </div>
               ))}
