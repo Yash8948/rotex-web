@@ -1,5 +1,7 @@
 declare global {
   namespace PrismaJson {
+    type StringList = string[];
+
     type IndustryStats = {
       id: string;
       value: number;
@@ -35,6 +37,15 @@ declare global {
       og_image: { src: string; alt: string };
       canonical: string;
     };
+
+    type ProductApprovals = {
+      eac?: string | null;
+      sil3?: string | null;
+      ce?: string | null;
+      marine?: string | null;
+    };
+
+    type ProductSpecs = Record<string, string | number | null>;
   }
 }
 

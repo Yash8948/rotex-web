@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -34,6 +35,29 @@ export function TextAreaField(props: React.ComponentProps<typeof Textarea> & { l
   return (
     <Field label={label}>
       <Textarea {...rest} rows={rest.rows ?? 3} />
+    </Field>
+  );
+}
+
+export function SelectField(
+  props: React.ComponentProps<"select"> & { label: string; options: { value: string; label: string }[] }
+) {
+  const { label, options, className, ...rest } = props;
+  return (
+    <Field label={label}>
+      <select
+        {...rest}
+        className={cn(
+          "h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring",
+          className
+        )}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
     </Field>
   );
 }

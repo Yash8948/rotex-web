@@ -11,7 +11,7 @@ generator json {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model AdminUser {
@@ -25,22 +25,54 @@ model AdminUser {
 model Product {
   id       String   @id @default(cuid())
   slug     String   @unique
-  code     String
+  code     String   @unique
   name     String
   category String
   image    String
-  tags     String[]
+  /// [StringList]
+  tags     Json
 
-  subType       String?
-  operatingType String?
-  actionType    String?
-  portSize      String?
-  minPressure   String?
-  maxPressure   String?
-  operatorSize  String?
+  subType         String? // Engineering type (Standard, Valve Block, ...)
+  operatingType   String? // Design Type (Direct acting, Pilot Operated, ...)
+  actionType      String? // Functional Type (NC, NO, Universal, 5/2 way, ...)
+  portConnections Int? // Port Connections (2, 3, 5)
+  operatorSize    String? // unused by valve import; kept for future actuator/positioner products
+
+  bodyMaterial String?
+  sealMaterial String?
+  description  String?
+  remark       String?
+
+  /// [ProductApprovals]
+  approvals Json?
+
+  /// [ProductSpecs]
+  specs Json?
+
+  variants ProductVariant[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  size        String // SIZE (inch)
+  type        String? // Type (thread/connection type)
+  minPressure Float?
+  maxPressure Float?
+  orifice     String? // ORIFICE (mm) — raw string, handles composite values like "12/2.2"
+  flowFactor  String? // FLOW FACTOR (LPM) — raw string, handles composite values
+  optionCode  String? // suffix stripped from the original Model Number (e.g. "A", "EP", "V01")
+  // distinguishing variants that share a base model code
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, size, type, minPressure, maxPressure, orifice, flowFactor, optionCode])
 }
 
 model Industry {
@@ -70,9 +102,12 @@ model SubIndustry {
   challengesTitle     String
   solutionsTitle      String
   solutionsIntro      String
-  challenges          String[]
-  solutions           String[]
-  recommendedProducts String[]
+  /// [StringList]
+  challenges          Json
+  /// [StringList]
+  solutions           Json
+  /// [StringList]
+  recommendedProducts Json
 
   industry   Industry @relation(fields: [industryId], references: [id], onDelete: Cascade)
   industryId String
