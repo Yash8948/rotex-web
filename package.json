@@ -54,7 +54,7 @@
     "prisma-json-types-generator": "^5.1.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.0",
-    "typescript": "^5"
+    "typescript": "7.0.2"
   },
   "ignoreScripts": [
     "sharp",
