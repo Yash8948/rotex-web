@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -34,6 +34,8 @@ const COUNTRIES = ["India", "UAE", "Saudi Arabia", "United Kingdom", "Germany", 
 
 export function IndustryEnquiryForm({ industryName }: { industryName: string }) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const [submitError, setSubmitError] = useState<string>();
+  const [fileName, setFileName] = useState<string>();
 
   const {
     register,
@@ -45,8 +47,23 @@ export function IndustryEnquiryForm({ industryName }: { industryName: string }) 
   });
 
   const onSubmit = async (data: FormData) => {
-    await new Promise((r) => setTimeout(r, 800));
-    console.log(data);
+    setSubmitError(undefined);
+
+    const body = new FormData();
+    body.append("industryName", industryName);
+    for (const [key, value] of Object.entries(data)) {
+      if (value !== undefined) body.append(key, value);
+    }
+    const file = fileRef.current?.files?.[0];
+    if (file) body.append("file", file);
+
+    const res = await fetch("/api/v1/enquiries", { method: "POST", body });
+    const json = await res.json();
+
+    if (!json.success) {
+      setSubmitError(json.error?.message ?? "Failed to send enquiry. Please try again.");
+      throw new Error(json.error?.message ?? "Failed to submit enquiry");
+    }
   };
 
   return (
@@ -174,16 +191,26 @@ export function IndustryEnquiryForm({ industryName }: { industryName: string }) 
 
           {/* File upload */}
           <div>
-            <input ref={fileRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.jpg,.png" />
+            <input
+              ref={fileRef}
+              type="file"
+              className="hidden"
+              accept=".pdf,.doc,.docx,.jpg,.png"
+              onChange={(e) => setFileName(e.target.files?.[0]?.name)}
+            />
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
               className="w-full px-5 py-2.5 bg-gray-50 rounded-xl outline outline-1 -outline-offset-1 outline-gray-200 flex items-center justify-center gap-2 text-red-600 text-xs font-semibold font-montserrat uppercase leading-5 hover:bg-gray-100 transition-colors"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 4l3-3 3 3M1 10v1.5A1.5 1.5 0 002.5 13h9A1.5 1.5 0 0013 11.5V10" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Upload File
+              {fileName ?? "Upload File"}
             </button>
           </div>
+
+          {submitError && (
+            <p className="text-sm font-medium font-montserrat text-red-600">{submitError}</p>
+          )}
 
           {isSubmitSuccessful ? (
             <p className="text-sm font-medium font-montserrat text-green-600">

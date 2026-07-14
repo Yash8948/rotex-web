@@ -4,6 +4,7 @@ import { useForm, FormProvider, useFieldArray, useFormContext, useWatch, Control
 import { SectionMeta, SaveBar } from "@/components/admin/section-form-shell";
 import { Field, TextField, TextAreaField, SwitchField, AddButton, FieldGrid } from "@/components/admin/form-fields";
 import { MediaField } from "@/components/admin/media-field";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSaveAction } from "@/hooks/use-save-action";
 import { saveHomeSection } from "@/app/admin/(dashboard)/home/actions";
 import { Button } from "@/components/ui/button";
@@ -102,13 +103,19 @@ function SlideCard({ slideIndex, onRemove }: { slideIndex: number; onRemove: () 
             name={`slides.${slideIndex}.media.type`}
             render={({ field }) => (
               <Field label="Media Type">
-                <select
-                  {...field}
-                  className="h-9 w-40 rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring"
+                <Select
+                  items={{ video: "Video", image: "Image" }}
+                  value={field.value}
+                  onValueChange={field.onChange}
                 >
-                  <option value="video">Video</option>
-                  <option value="image">Image</option>
-                </select>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="video">Video</SelectItem>
+                    <SelectItem value="image">Image</SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
             )}
           />

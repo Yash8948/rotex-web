@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { VideoPlayer } from "@/components/ui/video-player";
+import { ImageView } from "@/components/ui/image-view";
 import { RotexArrow } from "@/components/ui/rotex-arrow";
 
 function ArrowBtn({
@@ -28,10 +29,32 @@ function ArrowBtn({
   );
 }
 
-const SLIDES = [
-  { src: "https://www.w3schools.com/html/mov_bbb.mp4" },
-  { src: "https://www.w3schools.com/html/movie.mp4" },
-  { src: "https://www.w3schools.com/html/mov_bbb.mp4" },
+type CtaButton = { label: string; href: string };
+type Slide = {
+  id: string;
+  published?: boolean;
+  title: string;
+  description: string;
+  media: { type: "image" | "video"; src: string; alt?: string };
+  cta_buttons: CtaButton[];
+};
+
+type HeroSectionProps = {
+  slides?: Slide[];
+};
+
+const defaultSlides: Slide[] = [
+  {
+    id: "default_1",
+    title: "Flow Control. Where It Matters Most.",
+    description:
+      "Engineered precise solutions that reduce downtime, enhance safety, and ensure uninterrupted operations across critical industry applications.",
+    media: { type: "video", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
+    cta_buttons: [
+      { label: "EXPLORE SOLUTIONS", href: "/solutions" },
+      { label: "DOWNLOAD 'ZERO DOWNTIME BLUE PRINT'", href: "/downloads" },
+    ],
+  },
 ];
 
 /* Figma: 577×496 exact */
@@ -49,11 +72,15 @@ const HEX_PATH_BB =
 const HEX_LEFT_EDGE =
   "M164.27,0 Q144.25,0 134.21,17.31 L10.04,230.79 Q0,248 10.04,265.21 L134.21,478.69 Q144.25,496 164.27,496";
 
-export function HeroSection() {
-  const [index, setIndex] = useState(0);
+export function HeroSection({ slides = defaultSlides }: HeroSectionProps) {
+  const publishedSlides = slides.filter((s) => s.published !== false);
+  const activeSlides = publishedSlides.length > 0 ? publishedSlides : defaultSlides;
 
-  const prev = () => setIndex(i => (i - 1 + SLIDES.length) % SLIDES.length);
-  const next = () => setIndex(i => (i + 1) % SLIDES.length);
+  const [index, setIndex] = useState(0);
+  const slide = activeSlides[index % activeSlides.length];
+
+  const prev = () => setIndex(i => (i - 1 + activeSlides.length) % activeSlides.length);
+  const next = () => setIndex(i => (i + 1) % activeSlides.length);
 
   return (
     <section className="relative w-full flex justify-center overflow-hidden bg-stone-900">
@@ -65,7 +92,7 @@ export function HeroSection() {
           className="absolute z-20 hidden lg:block"
           style={{ left: "54.44%", top: "160px" }}
         >
-          <HexSlider index={index} />
+          <HexSlider index={index} media={slide.media} title={slide.title} />
         </div>
 
         {/* Content block — Figma: left 80px, top 404.5px, w 669px, gap-9
@@ -83,8 +110,7 @@ export function HeroSection() {
                 letterSpacing: "-1.3px",
               }}
             >
-              <span className="text-white">Flow Control. </span><br />
-              Where It Matters Most.
+              {slide.title}
             </h1>
 
             {/* Figma: text-base (16px), weight 500, leading-6, color zinc-100 */}
@@ -92,26 +118,22 @@ export function HeroSection() {
               className="max-w-[547px] text-zinc-100 text-base font-medium leading-6"
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
-              Engineered precise solutions that reduce downtime, enhance safety,
-              and ensure uninterrupted operations across critical industry
-              applications.
+              {slide.description}
             </p>
           </div>
 
           {/* Mobile: stacked, content-width buttons */}
           <div className="flex flex-col items-start gap-4 lg:hidden">
-            <HeroOutlineBtn href="/solutions">EXPLORE SOLUTIONS</HeroOutlineBtn>
-            <HeroOutlineBtn href="/downloads">
-              DOWNLOAD &apos;ZERO DOWNTIME BLUE PRINT&apos;
-            </HeroOutlineBtn>
+            {slide.cta_buttons.map((btn) => (
+              <HeroOutlineBtn key={`${btn.label}-${btn.href}`} href={btn.href}>{btn.label}</HeroOutlineBtn>
+            ))}
           </div>
 
           {/* Desktop: inline buttons + arrow nav — Figma: gap-5, outline outline-1 outline-offset-[-1px] outline-stone-500 */}
           <div className="hidden lg:flex flex-wrap items-center gap-5">
-            <HeroOutlineBtn href="/solutions">EXPLORE SOLUTIONS</HeroOutlineBtn>
-            <HeroOutlineBtn href="/downloads">
-              DOWNLOAD &apos;ZERO DOWNTIME BLUE PRINT&apos;
-            </HeroOutlineBtn>
+            {slide.cta_buttons.map((btn) => (
+              <HeroOutlineBtn key={`${btn.label}-${btn.href}`} href={btn.href}>{btn.label}</HeroOutlineBtn>
+            ))}
 
             <nav aria-label="Banner navigation" className="inline-flex items-center gap-4">
               <ArrowBtn dir="prev" onClick={prev} />
@@ -124,7 +146,7 @@ export function HeroSection() {
               clipped by the section's overflow-hidden. Nav arrows stay within the visible area. */}
           <div className="relative mt-2 -mr-10 lg:hidden">
             <div className="w-[112%]">
-              <HexSlider index={index} fluid />
+              <HexSlider index={index} media={slide.media} title={slide.title} fluid />
             </div>
             <nav aria-label="Banner navigation" className="absolute right-[15%] bottom-2 inline-flex items-center gap-3">
               <ArrowBtn dir="prev" onClick={prev} />
@@ -164,8 +186,18 @@ function HeroOutlineBtn({
   );
 }
 
-/* Hexagon clip + video slider */
-function HexSlider({ index, fluid = false }: { index: number; fluid?: boolean }) {
+/* Hexagon clip + video/image slider */
+function HexSlider({
+  index,
+  media,
+  title,
+  fluid = false,
+}: {
+  index: number;
+  media: Slide["media"];
+  title: string;
+  fluid?: boolean;
+}) {
   /* Unique per instance — this component renders twice (desktop + mobile),
      and SVG id references break when the defining element sits in a
      display:none subtree, so duplicate ids must be avoided. */
@@ -210,11 +242,21 @@ function HexSlider({ index, fluid = false }: { index: number; fluid?: boolean })
             transition={{ duration: 0.45, ease: "easeInOut" }}
             style={{ position: "absolute", inset: 0 }}
           >
-            <VideoPlayer
-              src={SLIDES[index].src}
-              variant="dark"
-              containerClassName="w-full h-full"
-            />
+            {media.type === "video" ? (
+              <VideoPlayer
+                src={media.src}
+                variant="dark"
+                containerClassName="w-full h-full"
+              />
+            ) : (
+              <ImageView
+                src={media.src}
+                alt={media.alt ?? title}
+                fill
+                containerClassName="w-full h-full"
+                unoptimized
+              />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

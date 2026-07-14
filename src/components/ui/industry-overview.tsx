@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
-import type { IndustryStat } from "@/data/industries";
+
+type IndustryStat = { value: string; suffix?: string; label: string };
 
 function AnimatedCounter({ value, suffix }: { value: string; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);

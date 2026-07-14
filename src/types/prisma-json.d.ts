@@ -3,17 +3,15 @@ declare global {
     type StringList = string[];
 
     type IndustryStats = {
-      id: string;
-      value: number;
-      suffix: string;
+      value: string;
+      suffix?: string;
       label: string;
-      format_comma: boolean;
     }[];
 
     type IndustryWhyChoose = {
       title: string;
       highlight: string;
-      cards: { id: string; title: string; description: string }[];
+      cards: { title: string; description: string }[];
     };
 
     type NavLink = { id: string; label: string; href: string };

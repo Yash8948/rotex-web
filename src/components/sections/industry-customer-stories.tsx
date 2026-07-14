@@ -5,7 +5,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { CustomerStoryCard } from "@/components/ui/customer-story-card";
 import { RotexArrow } from "@/components/ui/rotex-arrow";
-import type { CustomerStory } from "@/data/industries";
+
+type CustomerStory = { quote: string; author: string; company: string; image: string };
 
 type Props = {
   stories: CustomerStory[];

@@ -80,6 +80,7 @@ model Industry {
   slug          String   @unique
   name          String
   bgKey         String?
+  image         String?
   description   String
   sectionTitle  String
   overview      String
@@ -99,6 +100,11 @@ model SubIndustry {
   slug                String
   name                String
   description         String
+  image               String?
+  /// [StringList]
+  partnerIds          Json     @default("[]")
+  /// [StringList]
+  storyIds            Json     @default("[]")
   challengesTitle     String
   solutionsTitle      String
   solutionsIntro      String
@@ -112,7 +118,7 @@ model SubIndustry {
   industry   Industry @relation(fields: [industryId], references: [id], onDelete: Cascade)
   industryId String
 
-  customerStories CustomerStory[]
+  createdAt DateTime @default(now())
 
   @@unique([industryId, slug])
 }
@@ -149,12 +155,29 @@ model HomeSection {
 }
 
 model CustomerStory {
-  id      String @id @default(cuid())
-  quote   String
-  author  String
-  company String
-  image   String
+  id        String   @id @default(cuid())
+  quote     String
+  author    String
+  company   String
+  image     String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  subIndustry   SubIndustry @relation(fields: [subIndustryId], references: [id], onDelete: Cascade)
-  subIndustryId String
+model Enquiry {
+  id           String   @id @default(cuid())
+  industryName String
+  fullName     String
+  enquiryType  String
+  product      String
+  phone        String
+  email        String
+  country      String
+  city         String
+  company      String?
+  designation  String?
+  message      String
+  fileUrl      String?
+  createdAt    DateTime @default(now())
 }

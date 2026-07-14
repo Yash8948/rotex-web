@@ -1,15 +1,13 @@
 import { redirect, notFound } from "next/navigation";
-import { INDUSTRIES } from "@/data/industries";
+import { getIndustryWithSubIndustries } from "@/lib/industries";
 
 type Props = { params: Promise<{ sector: string }> };
 
-export async function generateStaticParams() {
-  return INDUSTRIES.map((i) => ({ sector: i.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function IndustryPage({ params }: Props) {
   const { sector } = await params;
-  const industry = INDUSTRIES.find((i) => i.slug === sector);
+  const industry = await getIndustryWithSubIndustries(sector);
   if (!industry) notFound();
 
   const firstSub = industry.subIndustries[0];

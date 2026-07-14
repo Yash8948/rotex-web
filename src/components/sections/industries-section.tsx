@@ -7,75 +7,42 @@ import { ImageView } from "@/components/ui/image-view";
 import { RotexArrow } from "@/components/ui/rotex-arrow";
 import { cn } from "@/lib/utils";
 
-const industries = [
+type Industry = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  image: string;
+};
+
+type IndustriesSectionProps = {
+  heading?: { title: string; subtitle: string };
+  industries?: Industry[];
+};
+
+const defaultHeading = {
+  title: "Built Around Your Industry",
+  subtitle:
+    "Tailored solutions designed to meet the operational demands of your sector — ensuring precision, reliability, and long-term performance.",
+};
+
+const defaultIndustries: Industry[] = [
   {
     id: "oil-gas",
-    label: "Oil and Gas",
-    title: "OIL AND GAS",
+    slug: "oil-gas",
+    name: "Oil and Gas",
     description:
       "The Hidden Reason 73% of Oil & Gas Plants Shutdowns Are Actually Preventable (And Why Most Plants Still Don't Know This)",
     image: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1200&q=80",
-    href: "/industries/oil-gas",
-  },
-  {
-    id: "process",
-    label: "Process",
-    title: "PROCESS",
-    description:
-      "Precision flow control solutions built for continuous process environments where uptime is non-negotiable.",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&q=80",
-    href: "/industries/process",
-  },
-  {
-    id: "power",
-    label: "Power",
-    title: "POWER",
-    description:
-      "Engineered screening and conveying systems that keep power generation facilities running at peak efficiency.",
-    image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=80",
-    href: "/industries/power",
-  },
-  {
-    id: "rail",
-    label: "Rail",
-    title: "RAIL",
-    description:
-      "Heavy-duty material handling solutions designed for the demanding conditions of rail infrastructure and maintenance.",
-    image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=1200&q=80",
-    href: "/industries/rail",
-  },
-  {
-    id: "machine-solution",
-    label: "Machine Solution",
-    title: "MACHINE SOLUTION",
-    description:
-      "Custom-engineered flow and separation systems integrated seamlessly into your existing machine architecture.",
-    image: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1200&q=80",
-    href: "/industries/machine-solution",
-  },
-  {
-    id: "aerospace",
-    label: "Aerospace & Defence",
-    title: "AEROSPACE & DEFENCE",
-    description:
-      "Certified separation and screening equipment meeting the rigorous standards of aerospace and defence supply chains.",
-    image: "https://images.unsplash.com/photo-1517976487492-5750f3195933?w=1200&q=80",
-    href: "/industries/aerospace",
-  },
-  {
-    id: "automotive",
-    label: "Automotive",
-    title: "AUTOMOTIVE",
-    description:
-      "High-throughput material handling systems built for the speed and precision demands of automotive production.",
-    image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80",
-    href: "/industries/automotive",
   },
 ];
 
-export function IndustriesSection() {
+export function IndustriesSection({
+  heading = defaultHeading,
+  industries = defaultIndustries,
+}: IndustriesSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const active = industries[activeIndex];
+  const active = industries[activeIndex] ?? industries[0];
 
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -86,11 +53,10 @@ export function IndustriesSection() {
         {/* Heading + subtext */}
         <div className="flex flex-col gap-2 mb-8 lg:hidden">
           <h2 className="text-gradient-orange-dark font-montserrat font-normal leading-10 text-3xl">
-            Built Around Your Industry
+            {heading.title}
           </h2>
           <p className="text-zinc-500 text-sm font-medium font-montserrat leading-6">
-            Tailored solutions designed to meet the operational demands of your
-            sector — ensuring precision, reliability, and long-term performance.
+            {heading.subtitle}
           </p>
         </div>
 
@@ -107,7 +73,7 @@ export function IndustriesSection() {
                     isOpen ? "text-primary" : "text-stone-900"
                   )}
                 >
-                  {industry.label}
+                  {industry.name}
                   <Plus
                     size={18}
                     className={cn(
@@ -130,7 +96,7 @@ export function IndustriesSection() {
                         <ImageView
                           fill
                           src={industry.image}
-                          alt={industry.title}
+                          alt={industry.name}
                           containerClassName="w-full h-full"
                           className="object-cover"
                         />
@@ -139,7 +105,7 @@ export function IndustriesSection() {
                         <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-4 z-10">
                           <div>
                             <h3 className="text-zinc-100 font-montserrat font-medium text-xl uppercase leading-8 mb-2">
-                              {industry.title}
+                              {industry.name}
                             </h3>
                             <p className="text-zinc-100 text-sm font-medium font-montserrat leading-6">
                               {industry.description}
@@ -147,7 +113,7 @@ export function IndustriesSection() {
                           </div>
 
                           <Link
-                            href={industry.href}
+                            href={`/industries/${industry.slug}`}
                             className="w-full flex items-center justify-center gap-2.5 px-5 py-3 rounded-[45px] bg-white text-orange-600 font-montserrat font-medium text-base leading-7 hover:bg-primary hover:text-white transition-colors duration-150"
                           >
                             Explore
@@ -170,11 +136,10 @@ export function IndustriesSection() {
           <div className="w-96 shrink-0 flex flex-col justify-between self-stretch">
             <div className="flex flex-col gap-2">
               <h2 className="text-gradient-orange-dark font-montserrat font-normal leading-10 text-4xl">
-                Built Around Your Industry
+                {heading.title}
               </h2>
               <p className="text-zinc-500 text-sm font-medium font-montserrat leading-6">
-                Tailored solutions designed to meet the operational demands of your
-                sector — ensuring precision, reliability, and long-term performance.
+                {heading.subtitle}
               </p>
             </div>
 
@@ -191,7 +156,7 @@ export function IndustriesSection() {
                       : "border-stone-300 text-stone-900 hover:text-primary hover:border-primary"
                   )}
                 >
-                  {industry.label}
+                  {industry.name}
                 </button>
               ))}
             </div>
@@ -213,7 +178,7 @@ export function IndustriesSection() {
                 <ImageView
                   fill
                   src={active.image}
-                  alt={active.title}
+                  alt={active.name}
                   containerClassName="w-full h-full"
                   className="object-cover"
                   priority
@@ -235,7 +200,7 @@ export function IndustriesSection() {
                   transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 >
                   <h3 className="text-zinc-100 font-montserrat font-medium text-2xl lg:text-3xl uppercase leading-10 mb-2">
-                    {active.title}
+                    {active.name}
                   </h3>
                   <p className="text-zinc-100 text-sm lg:text-base font-medium font-montserrat leading-6 max-w-sm">
                     {active.description}
@@ -244,7 +209,7 @@ export function IndustriesSection() {
               </AnimatePresence>
 
               <Link
-                href={active.href}
+                href={`/industries/${active.slug}`}
                 className="shrink-0 flex items-center gap-2.5 px-5 py-3 rounded-full bg-white text-orange-600 font-montserrat font-medium text-sm lg:text-base leading-7 whitespace-nowrap hover:bg-stone-50 transition-colors duration-150"
               >
                 Explore

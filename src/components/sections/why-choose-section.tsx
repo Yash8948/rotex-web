@@ -2,9 +2,10 @@
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue, useScroll, useTransform } from "framer-motion";
-import type { WhyChooseCard } from "@/data/industries";
 import { HexIcon } from "@/components/ui/hex-icon";
 import industryFaqBg from "@/assets/Images/industry/industry-faq-bg.jpg";
+
+type WhyChooseCard = { title: string; description: string };
 
 type Props = {
   industryName: string;

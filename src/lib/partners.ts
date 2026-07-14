@@ -8,3 +8,10 @@ export async function getSelectedPartners(ids: string[]) {
     orderBy: { createdAt: "asc" },
   });
 }
+
+export async function getPublishedPartners() {
+  return prisma.partner.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "asc" },
+  });
+}

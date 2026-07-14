@@ -69,6 +69,27 @@ const GLOBAL_CONFIG = {
   },
 };
 
+const PARTNERS: { id: string; name: string; logo: string }[] = [
+  { id: "partner_001", name: "Scania", logo: "/uploads/partners/scania.png" },
+  { id: "partner_002", name: "Cummins", logo: "/uploads/partners/cummins.png" },
+  { id: "partner_003", name: "Reliance", logo: "/uploads/partners/reliance.png" },
+  { id: "partner_004", name: "Qatar Petroleum", logo: "/uploads/partners/qatar-petroleum.png" },
+  { id: "partner_005", name: "Petronas", logo: "/uploads/partners/petronas.png" },
+  { id: "partner_006", name: "Shell", logo: "/uploads/partners/shell.png" },
+  { id: "partner_007", name: "Aurobindo", logo: "/uploads/partners/aurobindo.png" },
+  { id: "partner_008", name: "Aramco", logo: "/uploads/partners/aramco.png" },
+  { id: "partner_009", name: "Bharat Petroleum", logo: "/uploads/partners/bharat-petroleum.png" },
+  { id: "partner_010", name: "Linde", logo: "/uploads/partners/linde.png" },
+  { id: "partner_011", name: "NPCIL", logo: "/uploads/partners/npcil.png" },
+  { id: "partner_012", name: "Adnoc", logo: "/uploads/partners/adnoc.png" },
+  { id: "partner_013", name: "Isro", logo: "/uploads/partners/isro.png" },
+  { id: "partner_014", name: "Air Liquide", logo: "/uploads/partners/air-liquide.png" },
+  { id: "partner_015", name: "Dr. Reddy's", logo: "/uploads/partners/dr-reddy.png" },
+  { id: "partner_016", name: "GE", logo: "/uploads/partners/ge.png" },
+  { id: "partner_017", name: "Daimler", logo: "/uploads/partners/daimler.png" },
+  { id: "partner_018", name: "NIGC", logo: "/uploads/partners/nigc.png" },
+];
+
 const HOME_SEO = {
   title: "Rotex | Flow Control. Where It Matters Most.",
   description:
@@ -119,7 +140,7 @@ const SECTIONS: { key: string; order: number; data: unknown }[] = [
     order: 2,
     data: {
       title: "Trusted by Industry Leaders",
-      partnerIds: [],
+      partnerIds: PARTNERS.map((p) => p.id),
     },
   },
   {
@@ -271,6 +292,14 @@ async function main() {
     create: { id: "home", data: HOME_SEO },
   });
 
+  for (const partner of PARTNERS) {
+    await prisma.partner.upsert({
+      where: { id: partner.id },
+      update: { name: partner.name, logo: partner.logo },
+      create: { id: partner.id, name: partner.name, logo: partner.logo, published: true },
+    });
+  }
+
   for (const section of SECTIONS) {
     await prisma.homeSection.upsert({
       where: { key: section.key },
@@ -279,7 +308,7 @@ async function main() {
     });
   }
 
-  console.log(`Seeded global config, home SEO, and ${SECTIONS.length} home sections.`);
+  console.log(`Seeded global config, home SEO, ${PARTNERS.length} partners, and ${SECTIONS.length} home sections.`);
 }
 
 main()

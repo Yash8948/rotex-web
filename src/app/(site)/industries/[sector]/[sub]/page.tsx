@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
-import { INDUSTRIES } from "@/data/industries";
+import { getSubIndustryDetail } from "@/lib/industries";
+import { getSelectedPartners } from "@/lib/partners";
+import { getSelectedCustomerStories } from "@/lib/customer-stories";
 import { IndustryHero } from "@/components/sections/industry-hero";
 import { TrustedLeaders } from "@/components/sections/trusted-leaders";
 import { IndustryChallengesSolutions } from "@/components/sections/industry-challenges-solutions";
-import { IndustryProductsSwiper } from "@/components/sections/industry-products-swiper";
+// import { IndustryProductsSwiper } from "@/components/sections/industry-products-swiper"; // TODO: re-enable once wired to the real Product catalog
 import { IndustryCustomerStories } from "@/components/sections/industry-customer-stories";
 
 import type { StaticImageData } from "next/image";
@@ -25,25 +27,21 @@ const BG_MAP: Record<string, StaticImageData> = {
 
 type Props = { params: Promise<{ sector: string; sub: string }> };
 
-export async function generateStaticParams() {
-  return INDUSTRIES.flatMap((industry) =>
-    industry.subIndustries.map((sub) => ({
-      sector: industry.slug,
-      sub: sub.slug,
-    }))
-  );
-}
+export const dynamic = "force-dynamic";
 
 export default async function IndustrySubPage({ params }: Props) {
   const { sector, sub } = await params;
 
-  const industry = INDUSTRIES.find((i) => i.slug === sector);
-  if (!industry) notFound();
+  const result = await getSubIndustryDetail(sector, sub);
+  if (!result) notFound();
 
-  const subIndustry = industry.subIndustries.find((s) => s.slug === sub);
-  if (!subIndustry) notFound();
+  const { industry, subIndustry } = result;
+  const bg = subIndustry.image ?? (industry.bgKey ? BG_MAP[industry.bgKey] : undefined);
 
-  const bg = industry.bgKey ? BG_MAP[industry.bgKey] : undefined;
+  const partners = await getSelectedPartners(subIndustry.partnerIds as unknown as string[]);
+  const logos = partners.map((p) => ({ id: p.id, src: p.logo, alt: p.name }));
+
+  const stories = await getSelectedCustomerStories(subIndustry.storyIds as unknown as string[]);
 
   return (
     <>
@@ -55,21 +53,23 @@ export default async function IndustrySubPage({ params }: Props) {
         />
       )}
 
-      <TrustedLeaders title="Trusted by Industry leaders" />
+      {logos.length > 0 && <TrustedLeaders title="Trusted by Industry leaders" logos={logos} />}
 
       <IndustryChallengesSolutions
         challengesTitle={subIndustry.challengesTitle}
-        challenges={subIndustry.challenges}
+        challenges={subIndustry.challenges as unknown as string[]}
         solutionsTitle={subIndustry.solutionsTitle}
         solutionsIntro={subIndustry.solutionsIntro}
-        solutions={subIndustry.solutions}
+        solutions={subIndustry.solutions as unknown as string[]}
       />
 
+      {/* TODO: re-enable once recommended products are wired to the real Product catalog
       <div id="recommended-products">
-        <IndustryProductsSwiper products={subIndustry.recommendedProducts} />
+        <IndustryProductsSwiper products={subIndustry.recommendedProducts as unknown as string[]} />
       </div>
+      */}
 
-      <IndustryCustomerStories stories={subIndustry.customerStories} />
+      <IndustryCustomerStories stories={stories} />
     </>
   );
 }

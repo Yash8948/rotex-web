@@ -6,7 +6,7 @@ import { IndustryTabs } from "@/components/sections/industry-tabs";
 import { WhyChooseSection } from "@/components/sections/why-choose-section";
 import { IndustryEnquiryForm } from "@/components/sections/industry-enquiry-form";
 import { IndustryHeroCtas } from "@/components/ui/industry-hero-ctas";
-import { INDUSTRIES } from "@/data/industries";
+import { getIndustryWithSubIndustries } from "@/lib/industries";
 
 import oilBg        from "@/assets/Images/breadcurmbBackgrounds/oil_bg.jpg";
 import powerBg      from "@/assets/Images/breadcurmbBackgrounds/power_bg.png";
@@ -29,9 +29,11 @@ type Props = {
   params: Promise<{ sector: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function IndustrySectorLayout({ children, params }: Props) {
   const { sector } = await params;
-  const industry = INDUSTRIES.find((i) => i.slug === sector);
+  const industry = await getIndustryWithSubIndustries(sector);
   if (!industry) notFound();
 
   const bg = industry.bgKey ? BG_MAP[industry.bgKey] : undefined;
@@ -46,7 +48,7 @@ export default async function IndustrySectorLayout({ children, params }: Props) 
       <IndustryOverview
         sectionTitle={industry.sectionTitle}
         overview={industry.overview}
-        stats={industry.stats}
+        stats={industry.stats as unknown as { value: string; suffix?: string; label: string }[]}
       />
 
       <IndustryTabs
@@ -58,7 +60,10 @@ export default async function IndustrySectorLayout({ children, params }: Props) 
       {children}
 
       {/* Fixed — sector-level, stays below all sub-sector content */}
-      <WhyChooseSection industryName={industry.name} whyChoose={industry.whyChoose} />
+      <WhyChooseSection
+        industryName={industry.name}
+        whyChoose={industry.whyChoose as unknown as { title: string; highlight: string; cards: { title: string; description: string }[] }}
+      />
 
       <div id="enquiry-form">
         <IndustryEnquiryForm industryName={industry.name} />

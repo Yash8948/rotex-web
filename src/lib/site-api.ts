@@ -35,3 +35,29 @@ export async function fetchHomeSection<T extends object>(
     return null;
   }
 }
+
+/**
+ * Fetches the live industries list through /api/v1/industries.
+ */
+export async function fetchIndustries<T extends object>(): Promise<T | null> {
+  try {
+    const baseUrl = await getBaseUrl();
+    const res = await fetch(`${baseUrl}/api/v1/industries`, { cache: "no-store" });
+
+    if (!res.ok) {
+      console.error(`[site-api] GET /api/v1/industries → ${res.status}`);
+      return null;
+    }
+
+    const json = await res.json();
+    if (!json.success) {
+      console.error(`[site-api] GET /api/v1/industries → ${json.error?.code}: ${json.error?.message}`);
+      return null;
+    }
+
+    return json.data;
+  } catch (err) {
+    console.error(`[site-api] GET /api/v1/industries failed:`, err);
+    return null;
+  }
+}
