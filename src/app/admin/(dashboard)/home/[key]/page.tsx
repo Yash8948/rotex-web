@@ -2,13 +2,13 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Breadcrumb } from "@/components/admin/breadcrumb";
 import { HeroForm } from "@/components/admin/home-sections/hero-form";
-import { LogoMarqueeForm } from "@/components/admin/home-sections/logo-marquee-form";
 import { PartnersPickerForm } from "@/components/admin/home-sections/partners-picker-form";
+import { CertificationsPickerForm } from "@/components/admin/home-sections/certifications-picker-form";
 import { RedefiningForm } from "@/components/admin/home-sections/redefining-form";
 import { IndustriesForm } from "@/components/admin/home-sections/industries-form";
 import { ProductsForm } from "@/components/admin/home-sections/products-form";
-import { CustomerStoriesForm } from "@/components/admin/home-sections/customer-stories-form";
-import { ResourcesForm } from "@/components/admin/home-sections/resources-form";
+import { CustomerStoriesPickerForm } from "@/components/admin/home-sections/customer-stories-picker-form";
+import { ResourcesPickerForm } from "@/components/admin/home-sections/resources-picker-form";
 import { CtaForm } from "@/components/admin/home-sections/cta-form";
 
 export default async function AdminHomeSectionPage({
@@ -27,11 +27,29 @@ export default async function AdminHomeSectionPage({
   const label = key.replace("-", " ");
 
   const allPartners =
-    key === "partners"
+    key === "partners" || key === "certifications"
       ? await prisma.partner.findMany({
           where: { published: true },
           orderBy: { createdAt: "asc" },
           select: { id: true, name: true, logo: true },
+        })
+      : [];
+
+  const allStories =
+    key === "customer-stories"
+      ? await prisma.customerStory.findMany({
+          where: { published: true },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, quote: true, author: true, company: true, image: true },
+        })
+      : [];
+
+  const allResources =
+    key === "resources"
+      ? await prisma.resource.findMany({
+          where: { published: true },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, type: true, title: true, slug: true, image: true },
         })
       : [];
 
@@ -50,13 +68,17 @@ export default async function AdminHomeSectionPage({
         <PartnersPickerForm {...meta} initialData={data} allPartners={allPartners} />
       )}
       {key === "certifications" && (
-        <LogoMarqueeForm sectionKey={key} {...meta} initialData={data} />
+        <CertificationsPickerForm {...meta} initialData={data} allPartners={allPartners} />
       )}
       {key === "redefining" && <RedefiningForm {...meta} initialData={data} />}
       {key === "industries" && <IndustriesForm {...meta} initialData={data} />}
       {key === "products" && <ProductsForm {...meta} initialData={data} />}
-      {key === "customer-stories" && <CustomerStoriesForm {...meta} initialData={data} />}
-      {key === "resources" && <ResourcesForm {...meta} initialData={data} />}
+      {key === "customer-stories" && (
+        <CustomerStoriesPickerForm {...meta} initialData={data} allStories={allStories} />
+      )}
+      {key === "resources" && (
+        <ResourcesPickerForm {...meta} initialData={data} allResources={allResources} />
+      )}
       {key === "cta" && <CtaForm {...meta} initialData={data} />}
     </div>
   );

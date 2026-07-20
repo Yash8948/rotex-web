@@ -3,54 +3,31 @@ import { useRef } from "react";
 import { CustomerStoryCard } from "@/components/ui/customer-story-card";
 import { RotexArrow } from "@/components/ui/rotex-arrow";
 
-const stories = [
+type Story = { id: string; quote: string; author: string; company: string; image: string };
+
+type CustomerStoriesSectionProps = {
+  heading?: { title: string; subtitle: string };
+  stories?: Story[];
+};
+
+const defaultHeading = { title: "Customer Stories", subtitle: "Trusted across industries, proven in action" };
+
+const defaultStories: Story[] = [
   {
     id: "1",
-    media: { type: "image" as const, src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=640&q=80" },
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=640&q=80",
     quote: "Rotex solutions have consistently improved our system reliability and reduced downtime significantly. Their engineering precision truly reflects in performance.",
     author: "Rajesh Mehta",
     company: "Plant Head, Aarti Industries Ltd.",
-  },
-  {
-    id: "2",
-    media: { type: "image" as const, src: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=640&q=80" },
-    quote: "Rotex solutions have consistently improved our system reliability and reduced downtime significantly. Their engineering precision truly reflects in performance.",
-    author: "Rajesh Mehta",
-    company: "Plant Head, Aarti Industries Ltd.",
-  },
-  {
-    id: "3",
-    media: { type: "image" as const, src: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=640&q=80" },
-    quote: "Rotex solutions have consistently improved our system reliability and reduced downtime significantly. Their engineering precision truly reflects in performance.",
-    author: "Rajesh Mehta",
-    company: "Plant Head, Aarti Industries Ltd.",
-  },
-  {
-    id: "4",
-    media: { type: "image" as const, src: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=640&q=80" },
-    quote: "Rotex solutions have consistently improved our system reliability and reduced downtime significantly. Their engineering precision truly reflects in performance.",
-    author: "Rajesh Mehta",
-    company: "Plant Head, Aarti Industries Ltd.",
-  },
-  {
-    id: "5",
-    media: { type: "image" as const, src: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=640&q=80" },
-    quote: "Rotex solutions have consistently improved our system reliability and reduced downtime significantly. Their engineering precision truly reflects in performance.",
-    author: "Rajesh Mehta",
-    company: "Plant Head, Aarti Industries Ltd.",
-  },
-  {
-    id: "6",
-    media: { type: "video" as const, src: "https://www.w3schools.com/html/mov_bbb.mp4" },
-    quote: "Exceptional build quality and after-sales support. Rotex valves have been the cornerstone of our process reliability for over a decade.",
-    author: "Priya Nair",
-    company: "Operations Head, Tata Chemicals Ltd.",
   },
 ];
 
 const SCROLL_AMOUNT = 606; // card width (578) + gap (28)
 
-export function CustomerStoriesSection() {
+export function CustomerStoriesSection({
+  heading = defaultHeading,
+  stories = defaultStories,
+}: CustomerStoriesSectionProps) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: "left" | "right") => {
@@ -73,10 +50,10 @@ export function CustomerStoriesSection() {
         <div className="flex flex-col gap-1.5 lg:flex-row lg:items-end lg:justify-between lg:gap-3 mb-8 lg:mb-10">
           <div className="flex flex-col gap-1.5 lg:gap-3">
             <h2 className="text-gradient-orange-dark font-montserrat font-normal text-2xl lg:text-4xl leading-8 lg:leading-10">
-              Customer Stories
+              {heading.title}
             </h2>
             <p className="text-stone-500 font-montserrat font-medium text-sm lg:text-base leading-5 lg:leading-6">
-              Trusted across industries, proven in action
+              {heading.subtitle}
             </p>
           </div>
 
@@ -107,7 +84,12 @@ export function CustomerStoriesSection() {
         >
           {stories.map((story) => (
             <div key={story.id} className="w-full lg:w-auto shrink-0 snap-center">
-              <CustomerStoryCard {...story} />
+              <CustomerStoryCard
+                media={{ type: "image", src: story.image }}
+                quote={story.quote}
+                author={story.author}
+                company={story.company}
+              />
             </div>
           ))}
         </div>

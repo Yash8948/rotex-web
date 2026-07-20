@@ -40,3 +40,13 @@ export async function saveGlobalConfig(data: PrismaJson.GlobalConfigData) {
 
   revalidatePath("/admin/global");
 }
+
+export async function saveAdminConfig(data: PrismaJson.AdminConfigData) {
+  await prisma.adminConfig.upsert({
+    where: { id: "admin" },
+    update: { data },
+    create: { id: "admin", data },
+  });
+
+  revalidatePath("/admin", "layout");
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   DndContext,
   closestCenter,
@@ -16,7 +17,7 @@ import {
 } from "@dnd-kit/sortable";
 import { SectionRow } from "@/components/admin/section-row";
 import { Button } from "@/components/ui/button";
-import { reorderHomeSections } from "@/app/admin/(dashboard)/home/actions";
+import { reorderHomeSections, toggleHomeSectionEnabled } from "@/app/admin/(dashboard)/home/actions";
 
 type Section = { key: string; enabled: boolean };
 
@@ -52,13 +53,32 @@ export function SortableSectionList({ sections }: { sections: Section[] }) {
     setSaved(false);
   }
 
+  function handleToggle(key: string, enabled: boolean) {
+    setItems((current) => current.map((s) => (s.key === key ? { ...s, enabled } : s)));
+    const label = key.replace("-", " ");
+    startTransition(async () => {
+      try {
+        await toggleHomeSectionEnabled(key, enabled);
+        toast.success(`${label} ${enabled ? "enabled" : "disabled"}`);
+      } catch {
+        setItems((current) => current.map((s) => (s.key === key ? { ...s, enabled: !enabled } : s)));
+        toast.error(`Failed to update ${label}`);
+      }
+    });
+  }
+
   return (
     <div>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={items.map((s) => s.key)} strategy={verticalListSortingStrategy}>
           <div className="divide-y divide-border">
             {items.map((section) => (
-              <SectionRow key={section.key} sectionKey={section.key} enabled={section.enabled} />
+              <SectionRow
+                key={section.key}
+                sectionKey={section.key}
+                enabled={section.enabled}
+                onToggle={(enabled) => handleToggle(section.key, enabled)}
+              />
             ))}
           </div>
         </SortableContext>

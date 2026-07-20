@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,290 +9,10 @@ import { GradientButton } from "@/components/ui/gradient-button";
 import { Menu } from "lucide-react";
 import { IoSearchOutline, IoChevronDownOutline } from "react-icons/io5";
 import { useScrolled } from "@/hooks/use-scrolled";
-import { type StaticImageData } from "next/image";
-import logo from "@/assets/logo.svg";
-import industriesMenuImg from "@/assets/Images/breadcurmbBackgrounds/mega_menu.png";
-import stayInformedMenuImg from "@/assets/Images/breadcurmbBackgrounds/mega_menu_01.png";
-import aboutUsMenuImg from "@/assets/Images/breadcurmbBackgrounds/mega_menu_02.png";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-// Products-style: left category switcher + middle sub-items + right CTA
-type SubItem = { label: string; description: string; href: string };
-
-type Category = {
-  label: string;
-  items: SubItem[];
-  viewAllLabel?: string;
-  viewAllHref?: string;
-};
-
-type CategorySwitcherMenu = {
-  type: "category-switcher";
-  categories: Category[];
-  cta: { text: string; href: string };
-};
-
-// Industries-style: flat multi-column + optional right image
-type FlatItem = { label: string; href: string };
-
-type FlatGroup = {
-  heading: string;
-  href?: string;
-  description?: string;
-  items?: FlatItem[];
-  itemColumns?: FlatItem[][];
-};
-
-type FlatColumn = { groups: FlatGroup[]; className?: string };
-
-type FlatMenu = {
-  type: "flat";
-  columns: FlatColumn[];
-  image?: string | StaticImageData;
-  imageCaption?: string;
-  cta?: { text: string; href: string };
-};
-
-type MegaMenuConfig = CategorySwitcherMenu | FlatMenu;
-
-type NavItem = {
-  label: string;
-  href: string;
-  megaMenu?: MegaMenuConfig;
-};
-
-// ─── Products Mega Menu Data ──────────────────────────────────────────────────
-
-const productsMegaMenu: CategorySwitcherMenu = {
-  type: "category-switcher",
-  categories: [
-    {
-      label: "Solenoid Valve",
-      items: [
-        {
-          label: "2 Way Valves",
-          description: "Two port solenoid valve for efficient fluid control applications",
-          href: "/products/solenoid-valve/2-way",
-        },
-        {
-          label: "3 Way Valves",
-          description: "Controls start stop and exhaust with three port design",
-          href: "/products/solenoid-valve/3-way",
-        },
-        {
-          label: "5 Way Valves",
-          description: "Designed for fast switching and consistent motion control",
-          href: "/products/solenoid-valve/5-way",
-        },
-      ],
-      viewAllLabel: "View all Solenoid Valves",
-      viewAllHref: "/products/solenoid-valve",
-    },
-    { label: "Angle Seat Valve", items: [] },
-    { label: "Actuators", items: [] },
-    { label: "Positioners", items: [] },
-    { label: "Automotive Solutions", items: [] },
-  ],
-  cta: {
-    text: "Talk to experts to choose the right product",
-    href: "/contact",
-  },
-};
-
-// ─── Industries Mega Menu Data ────────────────────────────────────────────────
-
-const industriesMegaMenu: FlatMenu = {
-  type: "flat",
-  columns: [
-    {
-      groups: [
-        {
-          heading: "Oil & Gas",
-          href: "/industries/oil-gas",
-          items: [
-            { label: "Upstream", href: "/industries/oil-gas/upstream" },
-            { label: "Midstream", href: "/industries/oil-gas/midstream" },
-            { label: "Downstream", href: "/industries/oil-gas/downstream" },
-          ],
-        },
-        {
-          heading: "Power",
-          href: "/industries/power",
-          items: [
-            { label: "Thermal Power", href: "/industries/power/thermal" },
-            { label: "Nuclear Power", href: "/industries/power/nuclear" },
-          ],
-        },
-      ],
-    },
-    {
-      groups: [
-        {
-          heading: "Process Industries",
-          href: "/industries/process",
-          itemColumns: [
-            [
-              { label: "Fertilizer", href: "/industries/process/fertilizer" },
-              { label: "Chemicals", href: "/industries/process/chemicals" },
-              { label: "Cement", href: "/industries/process/cement" },
-              { label: "Food & Beverages", href: "/industries/process/food-beverages" },
-              { label: "Paper & Pulp", href: "/industries/process/paper-pulp" },
-              { label: "Pharmaceuticals", href: "/industries/process/pharmaceuticals" },
-            ],
-            [
-              { label: "Paints", href: "/industries/process/paints" },
-              { label: "Textiles", href: "/industries/process/textiles" },
-              { label: "Water Management", href: "/industries/process/water-management" },
-              { label: "Metal & Mining", href: "/industries/process/metal-mining" },
-              { label: "Tyre", href: "/industries/process/tyre" },
-            ],
-          ],
-        },
-      ],
-    },
-    {
-      groups: [
-        {
-          heading: "Machine Solutions",
-          href: "/industries/machine-solutions",
-          items: [{ label: "Fire Fighting System", href: "/industries/machine-solutions/fire-fighting" }],
-        },
-        { heading: "Automotive", href: "/industries/automotive" },
-        { heading: "Rail", href: "/industries/rail" },
-        { heading: "Aerospace & Defence", href: "/industries/aerospace-defence" },
-      ],
-    },
-  ],
-  image: industriesMenuImg,
-};
-
-// ─── Stay Informed Mega Menu Data ────────────────────────────────────────────
-
-const stayInformedMegaMenu: FlatMenu = {
-  type: "flat",
-  columns: [
-    {
-      groups: [
-        {
-          heading: "Blogs",
-          href: "/blogs",
-          description: "Expert insights for modern industries",
-        },
-      ],
-    },
-    {
-      groups: [
-        {
-          heading: "News & Updates",
-          href: "/news",
-          description: "Update with Latest Trends & Technology",
-        },
-      ],
-    },
-    {
-      groups: [
-        {
-          heading: "Case Studies",
-          href: "/case-studies",
-          description: "Update with Latest Trends & Technology",
-        },
-      ],
-    },
-  ],
-  image: stayInformedMenuImg,
-  imageCaption: "ISRO's Mahendragiri Facility",
-};
-
-// ─── About Us Mega Menu Data ──────────────────────────────────────────────────
-
-const aboutUsMegaMenu: FlatMenu = {
-  type: "flat",
-  columns: [
-    {
-      groups: [
-        {
-          heading: "Who we are",
-          href: "/about",
-          description: "Our mission and Story",
-        },
-      ],
-    },
-    {
-      groups: [
-        {
-          heading: "Awards",
-          href: "/about/awards",
-          description: "Milestones of Excellence and Trust",
-        },
-      ],
-    },
-  ],
-  image: aboutUsMenuImg,
-};
-
-// ─── Join Us Mega Menu Data ───────────────────────────────────────────────────
-
-const joinUsMegaMenu: FlatMenu = {
-  type: "flat",
-  columns: [
-    {
-      className: "w-52",
-      groups: [
-        {
-          heading: "Become a Channel Partner",
-          href: "/join/channel-partner",
-          description: "Collaborate to drive shared industrial growth",
-        },
-      ],
-    },
-    {
-      className: "w-52",
-      groups: [
-        {
-          heading: "Become a Supplier",
-          href: "/join/supplier",
-          description: "Supply certified components for reliable operations",
-        },
-      ],
-    },
-    {
-      className: "w-32",
-      groups: [
-        {
-          heading: "Career",
-          href: "/join/career",
-          description: "Be a Part of Our Growth",
-        },
-      ],
-    },
-    {
-      className: "w-44",
-      groups: [
-        {
-          heading: "Partner Sales Tools",
-          href: "/join/partner-sales-tools",
-          description: "Partner-Ready Sales Resources",
-        },
-      ],
-    },
-  ],
-  cta: {
-    text: "Submit your details to Become a Channel Partner",
-    href: "/join/channel-partner",
-  },
-};
-
-// ─── Nav Items ────────────────────────────────────────────────────────────────
-
-const navItems: NavItem[] = [
-  { label: "Products", href: "/products", megaMenu: productsMegaMenu },
-  { label: "Industries", href: "/industries", megaMenu: industriesMegaMenu },
-  { label: "About Us", href: "/about", megaMenu: aboutUsMegaMenu },
-  { label: "Downloads", href: "/downloads" },
-  { label: "Stay Informed", href: "/news", megaMenu: stayInformedMegaMenu },
-  { label: "Join Us", href: "/join", megaMenu: joinUsMegaMenu },
-];
+type CategorySwitcherMenu = PrismaJson.CategorySwitcherMenu;
+type FlatMenu = PrismaJson.FlatMenu;
+type NavItem = PrismaJson.NavItem;
 
 // ─── Category Switcher Panel (Products) ──────────────────────────────────────
 
@@ -397,6 +117,10 @@ function FlatMegaMenuPanel({
   onMouseLeave: () => void;
   onClose: () => void;
 }) {
+  const defaultImage =
+    config.image ?? config.columns.flatMap((c) => c.groups).find((g) => g.image)?.image;
+  const [hoveredImage, setHoveredImage] = useState<string | undefined>(defaultImage);
+
   return (
     <div
       className="fixed top-20 lg:top-24 left-0 right-0 z-61 bg-white border-b border-stone-300 shadow-lg flex min-h-72"
@@ -408,7 +132,12 @@ function FlatMegaMenuPanel({
         {config.columns.map((col, colIdx) => (
           <div key={colIdx} className={`flex flex-col gap-11 shrink-0${col.className ? ` ${col.className}` : ""}`}>
             {col.groups.map((group) => (
-              <div key={group.heading} className="flex flex-col gap-2.5">
+              <div
+                key={group.heading}
+                className="flex flex-col gap-2.5"
+                onMouseEnter={() => group.image && setHoveredImage(group.image)}
+                onMouseLeave={() => setHoveredImage(defaultImage)}
+              >
                 {/* Heading */}
                 {group.href ? (
                   <Link
@@ -490,16 +219,21 @@ function FlatMegaMenuPanel({
             <IoChevronDownOutline className="-rotate-90 text-white shrink-0" size={24} />
           </div>
         </Link>
-      ) : config.image ? (
+      ) : hoveredImage ? (
         <div className="w-96 shrink-0 relative overflow-hidden">
-          <Image
-            src={config.image}
-            alt={config.imageCaption ?? ""}
-            fill
-            className="object-cover"
-            sizes="384px"
-          />
-          {config.imageCaption && (
+          <AnimatePresence mode="sync">
+            <motion.div
+              key={hoveredImage}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <Image src={hoveredImage} alt={config.imageCaption ?? ""} fill className="object-cover" sizes="384px" unoptimized />
+            </motion.div>
+          </AnimatePresence>
+          {config.imageCaption && hoveredImage === defaultImage && (
             <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent flex items-end p-5">
               <span className="text-white text-lg font-semibold font-montserrat leading-5">
                 {config.imageCaption}
@@ -520,7 +254,13 @@ const LOGO_DURATION = 0.6;
 
 // ─── Floating Logo ────────────────────────────────────────────────────────────
 
-function FloatingLogo({ scrolled }: { scrolled: boolean }) {
+function FloatingLogo({
+  scrolled,
+  logo,
+}: {
+  scrolled: boolean;
+  logo: { src: string; alt: string; href: string };
+}) {
   return (
     <motion.div
       className="fixed left-0 right-0 pointer-events-none hidden lg:block"
@@ -530,7 +270,7 @@ function FloatingLogo({ scrolled }: { scrolled: boolean }) {
       transition={{ duration: LOGO_DURATION, ease: EASE }}
     >
       <div className="container">
-        <Link href="/" className="pointer-events-auto inline-block">
+        <Link href={logo.href} className="pointer-events-auto inline-block">
           <motion.div
             className="overflow-hidden"
             initial={false}
@@ -541,11 +281,12 @@ function FloatingLogo({ scrolled }: { scrolled: boolean }) {
             transition={{ duration: LOGO_DURATION, ease: EASE }}
           >
             <Image
-              src={logo}
-              alt="Rotex"
+              src={logo.src}
+              alt={logo.alt}
               width={282}
               height={60}
               priority
+              unoptimized
               className="w-full h-full object-contain object-left"
             />
           </motion.div>
@@ -557,13 +298,36 @@ function FloatingLogo({ scrolled }: { scrolled: boolean }) {
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 
-export function Navbar() {
+export function Navbar({ config }: { config: PrismaJson.GlobalConfigData }) {
+  const navItems = config.header.nav.filter((item) => item.enabled);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [heroActive, setHeroActive] = useState(true);
   const scrolled = useScrolled(60);
   const pathname = usePathname();
   const isHome = pathname === "/";
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // No hero slides to sit on top of → header can't be transparent, must render solid.
+  useEffect(() => {
+    if (!isHome) return;
+    let cancelled = false;
+    fetch("/api/v1/home/hero", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((json) => {
+        if (cancelled) return;
+        const slides = json?.data?.slides;
+        setHeroActive(Boolean(json?.data?.enabled) && Array.isArray(slides) && slides.length > 0);
+      })
+      .catch(() => {
+        if (!cancelled) setHeroActive(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isHome]);
+
+  const transparent = isHome && heroActive;
 
   const openMenu = useCallback((label: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -583,34 +347,35 @@ export function Navbar() {
     setActiveMenu(null);
   }, []);
 
-  const activeItem = navItems.find((item) => item.label === activeMenu);
+  const activeItem = navItems.find((item) => item.id === activeMenu);
 
   return (
     <>
-      {isHome && <FloatingLogo scrolled={scrolled} />}
+      {transparent && <FloatingLogo scrolled={scrolled} logo={config.logo} />}
 
       <motion.header
         className="fixed top-0 left-0 right-0 z-50"
         initial={false}
         animate={{
-          backgroundColor: !isHome || scrolled ? "#201D1D" : "rgba(13,13,13,0)",
+          backgroundColor: !transparent || scrolled ? "#201D1D" : "rgba(13,13,13,0)",
         }}
         transition={{ duration: DURATION, ease: EASE }}
       >
         <div className="container h-20 lg:h-24 flex items-center justify-between">
           {/* LEFT */}
           <div className="flex items-center">
-            <Link href="/" className="lg:hidden">
+            <Link href={config.logo.href} className="lg:hidden">
               <Image
-                src={logo}
-                alt="Rotex"
+                src={config.logo.src}
+                alt={config.logo.alt}
                 width={96}
                 height={20}
+                unoptimized
                 className="w-24 h-5 object-contain"
               />
             </Link>
 
-            {isHome ? (
+            {transparent ? (
               <motion.div
                 className="shrink-0 hidden lg:block"
                 initial={false}
@@ -618,12 +383,13 @@ export function Navbar() {
                 transition={{ duration: LOGO_DURATION, ease: EASE }}
               />
             ) : (
-              <Link href="/" className="hidden lg:flex items-center mr-6">
+              <Link href={config.logo.href} className="hidden lg:flex items-center mr-6">
                 <Image
-                  src={logo}
-                  alt="Rotex"
+                  src={config.logo.src}
+                  alt={config.logo.alt}
                   width={144}
                   height={31}
+                  unoptimized
                   className="w-36 h-8 object-contain"
                 />
               </Link>
@@ -632,16 +398,16 @@ export function Navbar() {
             <div className="hidden lg:flex items-center gap-6">
               {navItems.map((item) => (
                 <div
-                  key={item.label}
+                  key={item.id}
                   onMouseEnter={() =>
-                    item.megaMenu ? openMenu(item.label) : scheduleClose()
+                    item.megaMenu ? openMenu(item.id) : scheduleClose()
                   }
                   onMouseLeave={scheduleClose}
                 >
                   <Link href={item.href} className="flex items-center gap-0.5 group">
                     <span
                       className={`text-sm font-medium font-montserrat whitespace-nowrap transition-colors duration-150 ${
-                        activeMenu === item.label
+                        activeMenu === item.id
                           ? "text-white"
                           : "text-stone-300 group-hover:text-white"
                       }`}
@@ -652,7 +418,7 @@ export function Navbar() {
                       <IoChevronDownOutline
                         size={14}
                         className={`transition-all duration-150 shrink-0 ${
-                          activeMenu === item.label
+                          activeMenu === item.id
                             ? "text-white rotate-180"
                             : "text-stone-300 group-hover:text-white"
                         }`}
@@ -673,7 +439,7 @@ export function Navbar() {
             >
               <IoSearchOutline size={22} />
             </button>
-            <GradientButton href="/contact">Contact Us</GradientButton>
+            <GradientButton href={config.header.cta.href}>{config.header.cta.label}</GradientButton>
           </div>
 
           {/* Mobile */}
@@ -700,17 +466,19 @@ export function Navbar() {
                 style={{ background: "#201D1D" }}
               >
                 <div className="flex flex-col gap-1 mt-6 px-2">
-                  <Link href="/" className="mb-4">
+                  <Link href={config.logo.href} className="mb-4">
                     <Image
-                      src={logo}
-                      alt="Rotex"
+                      src={config.logo.src}
+                      alt={config.logo.alt}
+                      width={144}
                       height={28}
+                      unoptimized
                       className="w-36 h-8 object-contain"
                     />
                   </Link>
                   {navItems.map((item) => (
                     <Link
-                      key={item.href}
+                      key={item.id}
                       href={item.href}
                       className="flex items-center justify-between px-2 py-3 text-sm font-medium font-montserrat text-white/75 hover:text-white hover:bg-white/5 rounded-md transition-colors"
                     >
@@ -721,8 +489,8 @@ export function Navbar() {
                     </Link>
                   ))}
                   <div className="mt-4">
-                    <GradientButton href="/contact" className="w-full">
-                      Contact Us
+                    <GradientButton href={config.header.cta.href} className="w-full">
+                      {config.header.cta.label}
                     </GradientButton>
                   </div>
                 </div>

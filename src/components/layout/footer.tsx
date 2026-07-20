@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FaLinkedinIn, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/logo.svg";
+import { SOCIAL_PLATFORM_MAP } from "@/lib/social-platforms";
 import bg from "@/assets/footer_bg.svg";
 
 const FOOTER_GRADIENT = `
@@ -16,7 +16,10 @@ const FOOTER_GRADIENT = `
   )
 `.trim();
 
-export function Footer() {
+export function Footer({ config }: { config: PrismaJson.GlobalConfigData }) {
+  const { logo, footer } = config;
+  const columns = footer.columns.filter((c) => c.enabled !== false);
+
   return (
     <footer
       className="relative overflow-hidden"
@@ -35,152 +38,124 @@ export function Footer() {
       <div className="container relative z-10 flex flex-col">
 
         {/* ── MOBILE ── */}
-        <div className="flex flex-col gap-10 pt-16 pb-16 lg:hidden">
+        <div className="flex flex-col gap-10 pt-16 pb-10 lg:hidden">
 
           {/* Logo + tagline */}
           <div className="flex flex-col gap-2.5">
-            <Link href="/">
+            <Link href={logo.href}>
               <Image
-                src={logo}
-                alt="Rotex"
+                src={logo.src}
+                alt={logo.alt}
+                width={144}
                 height={32}
                 priority
+                unoptimized
                 className="w-36 h-8 object-contain"
               />
             </Link>
             <p className="text-white text-base font-medium font-montserrat leading-6">
-              Engineering For the Future
+              {footer.tagline}
             </p>
           </div>
 
-          {/* Link columns — 3 rows x 2 cols */}
-          <div className="flex flex-col gap-10">
-            <div className="grid grid-cols-2 gap-5">
-              <FooterColumn heading="Products" compact links={[
-                "Solenoid Valves",
-                "Angle Seat Valves",
-                "Automotive solutions",
-                "Actuators",
-                "Positioners",
-              ]} />
-              <FooterColumn heading="Industries" compact links={[
-                "Oil & Gas",
-                "Process",
-                "Power",
-                "Rail",
-                "Machine Solutions",
-                "Aerospace & Defense",
-                "Automotive",
-              ]} />
-            </div>
-            <div className="grid grid-cols-2 gap-5">
-              <FooterColumn heading="Company" compact links={["Who we are", "Awards"]} />
-              <FooterColumn heading="Resources" compact links={["Downloads"]} />
-            </div>
-            <div className="grid grid-cols-2 gap-5">
-              <FooterColumn heading="Stay Informed" compact links={[
-                "Blogs",
-                "News & Updates",
-                "Case Studies",
-              ]} />
-              <FooterColumn heading="Join Us" compact links={[
-                "Become a Distributor",
-                "Become a Supplier",
-                "Career",
-              ]} />
-            </div>
+          {/* Link columns */}
+          <div className="grid grid-cols-2 gap-x-5 gap-y-10">
+            {columns.map((col) => (
+              <FooterColumn key={col.id} heading={col.heading} links={col.links} compact />
+            ))}
           </div>
 
           {/* Connect with us */}
-          <div className="flex flex-col gap-5">
-            <p className="opacity-50 text-white text-base font-semibold font-montserrat leading-5">
-              Connect With Us
-            </p>
-            <div className="flex justify-start items-center gap-2">
-              <SocialIcon href="#" label="LinkedIn"><FaLinkedinIn size={18} /></SocialIcon>
-              <SocialIcon href="#" label="Instagram"><FaInstagram size={18} /></SocialIcon>
-              <SocialIcon href="#" label="Facebook"><FaFacebookF size={18} /></SocialIcon>
+          {footer.social.length > 0 && (
+            <div className="flex flex-col gap-5">
+              <p className="opacity-50 text-white text-base font-semibold font-montserrat leading-5">
+                Connect With Us
+              </p>
+              <div className="flex justify-start items-center gap-2">
+                {footer.social.map((s) => (
+                  <SocialIcon key={s.id} href={s.href} platform={s.platform} />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* ── DESKTOP ── */}
         <div className="hidden lg:flex flex-col">
 
-          {/* Logo + tagline — Figma: top-[120px] */}
+          {/* Logo + tagline */}
           <div className="pt-30 flex flex-col gap-4">
-            <Link href="/">
+            <Link href={logo.href}>
               <Image
-                src={logo}
-                alt="Rotex"
+                src={logo.src}
+                alt={logo.alt}
+                width={192}
                 height={40}
                 priority
+                unoptimized
                 className="w-48 h-10 object-contain"
               />
             </Link>
             <p className="text-white text-base font-medium font-montserrat leading-6">
-              Engineering For the Future
+              {footer.tagline}
             </p>
           </div>
 
-          {/* Link columns — Figma: top-[362px], gap from logo bottom ~162px */}
-          <div className="mt-40.5 pb-16 flex justify-between items-start">
+          {/* Link columns */}
+          <div className="mt-40.5 pb-10 flex justify-between items-start gap-8">
+            {columns.map((col) => (
+              <FooterColumn key={col.id} heading={col.heading} links={col.links} />
+            ))}
 
-            <FooterColumn heading="Products" links={[
-              "Solenoid Valves",
-              "Angle Seat Valves",
-              "Automotive solutions",
-              "Actuators",
-              "Positioners",
-            ]} />
-
-            <FooterColumn heading="Industries" links={[
-              "Oil & Gas",
-              "Process",
-              "Power",
-              "Rail",
-              "Machine Solutions",
-              "Aerospace & Defense",
-              "Automotive",
-            ]} />
-
-            <div className="self-stretch flex flex-col justify-between items-start">
-              <FooterColumn heading="Company" links={["Who we are", "Awards"]} />
-              <FooterColumn heading="Join Us" links={[
-                "Become a Distributor",
-                "Become a Supplier",
-                "Career",
-              ]} />
-            </div>
-
-            <div className="self-stretch flex flex-col justify-between items-start">
-              <FooterColumn heading="Resources" links={["Downloads"]} />
-              <FooterColumn heading="Stay Informed" links={[
-                "Blogs",
-                "News & Updates",
-                "Case Studies",
-              ]} />
-            </div>
-
-            <div className="flex flex-col justify-start items-start gap-5">
-              <p className="opacity-50 text-white text-base font-semibold font-montserrat leading-5">
-                Connect With Us
-              </p>
-              <div className="flex justify-start items-center gap-2">
-                <SocialIcon href="#" label="LinkedIn"><FaLinkedinIn size={18} /></SocialIcon>
-                <SocialIcon href="#" label="Instagram"><FaInstagram size={18} /></SocialIcon>
-                <SocialIcon href="#" label="Facebook"><FaFacebookF size={18} /></SocialIcon>
+            {footer.social.length > 0 && (
+              <div className="flex flex-col justify-start items-start gap-5 shrink-0">
+                <p className="opacity-50 text-white text-base font-semibold font-montserrat leading-5">
+                  Connect With Us
+                </p>
+                <div className="flex justify-start items-center gap-2">
+                  {footer.social.map((s) => (
+                    <SocialIcon key={s.id} href={s.href} platform={s.platform} />
+                  ))}
+                </div>
               </div>
-            </div>
-
+            )}
           </div>
         </div>
+
+        {/* Legal */}
+        {(footer.legal.copyright || footer.legal.links.length > 0) && (
+          <div className="flex flex-col gap-3 border-t border-white/10 py-6 lg:flex-row lg:items-center lg:justify-between">
+            <p className="text-stone-300 text-xs font-medium font-montserrat">{footer.legal.copyright}</p>
+            {footer.legal.links.length > 0 && (
+              <div className="flex items-center gap-4">
+                {footer.legal.links.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="text-stone-300 text-xs font-medium font-montserrat hover:text-white transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </footer>
   );
 }
 
-function FooterColumn({ heading, links, compact }: { heading: string; links: string[]; compact?: boolean }) {
+function FooterColumn({
+  heading,
+  links,
+  compact,
+}: {
+  heading: string;
+  links: { label: string; href: string }[];
+  compact?: boolean;
+}) {
+  if (links.length === 0) return null;
   return (
     <div className="flex flex-col justify-start items-start gap-5">
       <p className="opacity-50 text-white text-base font-medium font-montserrat leading-6">
@@ -189,14 +164,14 @@ function FooterColumn({ heading, links, compact }: { heading: string; links: str
       <div className={compact ? "flex flex-col justify-start items-start gap-1.5" : "flex flex-col justify-start items-start gap-2"}>
         {links.map((link) => (
           <Link
-            key={link}
-            href="#"
+            key={link.href}
+            href={link.href}
             className={cn(
               "text-stone-100 font-medium font-montserrat hover:opacity-70 transition-opacity duration-150",
               compact ? "text-sm leading-6" : "text-base leading-6"
             )}
           >
-            {link}
+            {link.label}
           </Link>
         ))}
       </div>
@@ -204,14 +179,15 @@ function FooterColumn({ heading, links, compact }: { heading: string; links: str
   );
 }
 
-function SocialIcon({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
+function SocialIcon({ href, platform }: { href: string; platform: string }) {
+  const Icon = SOCIAL_PLATFORM_MAP[platform.toLowerCase()]?.icon;
   return (
     <a
       href={href}
-      aria-label={label}
+      aria-label={platform}
       className="size-7 flex items-center justify-center text-white hover:opacity-70 transition-opacity duration-150"
     >
-      {children}
+      {Icon ? <Icon size={18} /> : <Globe size={18} />}
     </a>
   );
 }

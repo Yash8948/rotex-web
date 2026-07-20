@@ -6,53 +6,203 @@ const adapter = new PrismaBetterSqlite3({
 });
 const prisma = new PrismaClient({ adapter });
 
-const GLOBAL_CONFIG = {
-  logo: { src: "https://cdn.rotex.com/brand/logo.svg", alt: "Rotex", href: "/" },
+const GLOBAL_CONFIG: PrismaJson.GlobalConfigData = {
+  logo: { src: "/logo.svg", alt: "Rotex", href: "/" },
   header: {
     nav: [
-      { id: "nav_001", label: "Products", href: "/products" },
-      { id: "nav_002", label: "Industries", href: "/industries" },
-      { id: "nav_003", label: "About", href: "/about" },
-      { id: "nav_004", label: "Resources", href: "/resources" },
-      { id: "nav_005", label: "Contact", href: "/contact" },
+      {
+        id: "nav_001",
+        label: "Products",
+        href: "/products",
+        enabled: true,
+        // Mega menu intentionally off — product categories aren't client-approved yet.
+        // Switch to "Product Categories (live data)" in admin once they are.
+        megaMenu: null,
+      },
+      {
+        id: "nav_002",
+        label: "Industries",
+        href: "/industries",
+        enabled: true,
+        megaMenu: {
+          type: "flat",
+          columns: [
+            {
+              groups: [
+                {
+                  heading: "Oil & Gas",
+                  href: "/industries/oil-gas",
+                  items: [
+                    { label: "Upstream", href: "/industries/oil-gas/upstream" },
+                    { label: "Midstream", href: "/industries/oil-gas/midstream" },
+                    { label: "Downstream", href: "/industries/oil-gas/downstream" },
+                  ],
+                },
+                {
+                  heading: "Power",
+                  href: "/industries/power",
+                  items: [
+                    { label: "Thermal Power", href: "/industries/power/thermal" },
+                    { label: "Nuclear Power", href: "/industries/power/nuclear" },
+                  ],
+                },
+              ],
+            },
+            {
+              groups: [
+                {
+                  heading: "Process Industries",
+                  href: "/industries/process",
+                  items: [
+                    { label: "Fertilizer", href: "/industries/process/fertilizer" },
+                    { label: "Chemicals", href: "/industries/process/chemicals" },
+                    { label: "Cement", href: "/industries/process/cement" },
+                    { label: "Food & Beverages", href: "/industries/process/food-beverages" },
+                    { label: "Paper & Pulp", href: "/industries/process/paper-pulp" },
+                    { label: "Pharmaceuticals", href: "/industries/process/pharmaceuticals" },
+                    { label: "Paints", href: "/industries/process/paints" },
+                    { label: "Textiles", href: "/industries/process/textiles" },
+                    { label: "Water Management", href: "/industries/process/water-management" },
+                    { label: "Metal & Mining", href: "/industries/process/metal-mining" },
+                    { label: "Tyre", href: "/industries/process/tyre" },
+                  ],
+                },
+              ],
+            },
+            {
+              groups: [
+                {
+                  heading: "Machine Solutions",
+                  href: "/industries/machine-solutions",
+                  items: [{ label: "Fire Fighting System", href: "/industries/machine-solutions/fire-fighting" }],
+                },
+                { heading: "Automotive", href: "/industries/automotive" },
+                { heading: "Rail", href: "/industries/rail" },
+                { heading: "Aerospace & Defence", href: "/industries/aerospace-defence" },
+              ],
+            },
+          ],
+          image: "/mega-menu/industries.png",
+        },
+      },
+      {
+        id: "nav_003",
+        label: "About Us",
+        href: "/about",
+        enabled: true,
+        megaMenu: {
+          type: "flat",
+          columns: [
+            { groups: [{ heading: "Who we are", href: "/about", description: "Our mission and Story" }] },
+            { groups: [{ heading: "Awards", href: "/about/awards", description: "Milestones of Excellence and Trust" }] },
+          ],
+          image: "/mega-menu/about.png",
+        },
+      },
+      { id: "nav_004", label: "Downloads", href: "/downloads", enabled: true, megaMenu: null },
+      {
+        id: "nav_005",
+        label: "Stay Informed",
+        href: "/news",
+        enabled: true,
+        megaMenu: {
+          type: "flat",
+          columns: [
+            { groups: [{ heading: "Blogs", href: "/blogs", description: "Expert insights for modern industries" }] },
+            { groups: [{ heading: "News & Updates", href: "/news", description: "Update with Latest Trends & Technology" }] },
+            { groups: [{ heading: "Case Studies", href: "/case-studies", description: "Update with Latest Trends & Technology" }] },
+          ],
+          image: "/mega-menu/stay-informed.png",
+          imageCaption: "ISRO's Mahendragiri Facility",
+        },
+      },
+      {
+        id: "nav_006",
+        label: "Join Us",
+        href: "/join",
+        enabled: true,
+        megaMenu: {
+          type: "flat",
+          columns: [
+            { className: "w-52", groups: [{ heading: "Become a Channel Partner", href: "/join/channel-partner", description: "Collaborate to drive shared industrial growth" }] },
+            { className: "w-52", groups: [{ heading: "Become a Supplier", href: "/join/supplier", description: "Supply certified components for reliable operations" }] },
+            { className: "w-32", groups: [{ heading: "Career", href: "/join/career", description: "Be a Part of Our Growth" }] },
+            { className: "w-44", groups: [{ heading: "Partner Sales Tools", href: "/join/partner-sales-tools", description: "Partner-Ready Sales Resources" }] },
+          ],
+          cta: { text: "Submit your details to Become a Channel Partner", href: "/join/channel-partner" },
+        },
+      },
     ],
-    cta: { label: "Get a Quote", href: "/contact" },
+    cta: { label: "Contact Us", href: "/contact" },
   },
   footer: {
-    tagline: "Engineering flow control solutions since 1967.",
+    tagline: "Engineering For the Future",
     columns: [
       {
         id: "col_001",
         heading: "Products",
+        enabled: true,
+        source: null,
         links: [
           { label: "Solenoid Valves", href: "/products/solenoid-valve" },
           { label: "Angle Seat Valves", href: "/products/angle-seat-valve" },
+          { label: "Automotive solutions", href: "/products/automotive-solutions" },
           { label: "Actuators", href: "/products/actuators" },
+          { label: "Positioners", href: "/products/positioners" },
         ],
       },
       {
         id: "col_002",
         heading: "Industries",
-        links: [
-          { label: "Oil & Gas", href: "/industries/oil-gas" },
-          { label: "Power", href: "/industries/power" },
-          { label: "Automotive", href: "/industries/automotive" },
-        ],
+        enabled: true,
+        // Resolved live from the Industry table (main industries only) — see main() below.
+        source: { type: "industries", selectedIds: [] as string[] },
+        links: [],
       },
       {
         id: "col_003",
         heading: "Company",
+        enabled: true,
+        source: null,
         links: [
-          { label: "About Us", href: "/about" },
-          { label: "Contact", href: "/contact" },
-          { label: "Careers", href: "/careers" },
+          { label: "Who we are", href: "/about" },
+          { label: "Awards", href: "/about/awards" },
+        ],
+      },
+      {
+        id: "col_004",
+        heading: "Join Us",
+        enabled: true,
+        source: null,
+        links: [
+          { label: "Become a Distributor", href: "/join/channel-partner" },
+          { label: "Become a Supplier", href: "/join/supplier" },
+          { label: "Career", href: "/join/career" },
+        ],
+      },
+      {
+        id: "col_005",
+        heading: "Resources",
+        enabled: true,
+        source: null,
+        links: [{ label: "Downloads", href: "/downloads" }],
+      },
+      {
+        id: "col_006",
+        heading: "Stay Informed",
+        enabled: true,
+        source: null,
+        links: [
+          { label: "Blogs", href: "/blogs" },
+          { label: "News & Updates", href: "/news" },
+          { label: "Case Studies", href: "/case-studies" },
         ],
       },
     ],
     social: [
       { id: "soc_001", platform: "linkedin", href: "https://linkedin.com/company/rotex" },
-      { id: "soc_002", platform: "youtube", href: "https://youtube.com/@rotex" },
-      { id: "soc_003", platform: "twitter", href: "https://twitter.com/rotex" },
+      { id: "soc_002", platform: "instagram", href: "https://instagram.com/rotex" },
+      { id: "soc_003", platform: "facebook", href: "https://facebook.com/rotex" },
     ],
     legal: {
       copyright: "© 2026 Rotex. All rights reserved.",
@@ -88,6 +238,18 @@ const PARTNERS: { id: string; name: string; logo: string }[] = [
   { id: "partner_016", name: "GE", logo: "/uploads/partners/ge.png" },
   { id: "partner_017", name: "Daimler", logo: "/uploads/partners/daimler.png" },
   { id: "partner_018", name: "NIGC", logo: "/uploads/partners/nigc.png" },
+];
+
+const RESOURCES: { type: string; slug: string; title: string; image: string }[] = [
+  { type: "case-studies", slug: "solenoid-valve-classification", title: "Solenoid Valve Classification: The Engineering Logic Behind Reliable Automation Systems", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" },
+  { type: "case-studies", slug: "future-industrial-valves", title: "Future of Industrial Valves: 7 Rotex Technologies Improving Reliability & Uptime", image: "https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=600&q=80" },
+  { type: "case-studies", slug: "select-solenoid-valve", title: "How to Select the Right Solenoid Valve for Your Industrial Process?", image: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=600&q=80" },
+  { type: "news", slug: "global-expansion", title: "Rotex Expands Global Distribution Network Across 15 New Markets", image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=80" },
+  { type: "news", slug: "smart-valve-controllers", title: "Rotex Launches Next-Generation Smart Valve Controllers for Industry 4.0", image: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=600&q=80" },
+  { type: "news", slug: "sil3-certification", title: "Rotex Achieves SIL 3 Certification for Critical Safety Systems", image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80" },
+  { type: "blogs", slug: "valve-maintenance-signs", title: "5 Signs Your Industrial Valve Needs Immediate Maintenance", image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80" },
+  { type: "blogs", slug: "valve-actuators-guide", title: "Understanding Valve Actuators: A Comprehensive Guide for Engineers", image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" },
+  { type: "blogs", slug: "flow-control-oil-gas", title: "Flow Control in the Oil & Gas Industry: Challenges and Solutions", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" },
 ];
 
 const HOME_SEO = {
@@ -206,15 +368,8 @@ const SECTIONS: { key: string; order: number; data: unknown }[] = [
     order: 6,
     data: {
       title: "Certified & Trusted Worldwide",
-      logos: [
-        { id: "cert_001", published: true, src: "https://cdn.rotex.com/certifications/iatf.png", alt: "IATF Certified" },
-        { id: "cert_002", published: true, src: "https://cdn.rotex.com/certifications/ul.png", alt: "UL Listed" },
-        { id: "cert_003", published: true, src: "https://cdn.rotex.com/certifications/atex.png", alt: "ATEX Certified" },
-        { id: "cert_004", published: true, src: "https://cdn.rotex.com/certifications/ce.png", alt: "CE Marked" },
-        { id: "cert_005", published: true, src: "https://cdn.rotex.com/certifications/kosha.png", alt: "KOSHA Certified" },
-        { id: "cert_006", published: true, src: "https://cdn.rotex.com/certifications/sil3.png", alt: "SIL 3 Certified" },
-        { id: "cert_007", published: true, src: "https://cdn.rotex.com/certifications/cert-7.png", alt: "Certification Name" },
-      ],
+      description: "Recognised and certified by leading global standards bodies and industry partners.",
+      partnerIds: PARTNERS.map((p) => p.id),
     },
   },
   {
@@ -222,10 +377,7 @@ const SECTIONS: { key: string; order: number; data: unknown }[] = [
     order: 7,
     data: {
       heading: { title: "Customer Stories", subtitle: "Trusted across industries, proven in action" },
-      stories: [
-        { id: "story_001", published: true, media: { type: "image", src: "https://cdn.rotex.com/stories/rajesh-mehta.jpg" }, quote: "Rotex solutions have consistently improved our system reliability and reduced downtime significantly. Their engineering precision truly reflects in performance.", author: "Rajesh Mehta", company: "Plant Head, Aarti Industries Ltd." },
-        { id: "story_002", published: true, media: { type: "video", src: "https://cdn.rotex.com/stories/story-2.mp4" }, quote: "Quote text here.", author: "Author Name", company: "Role, Company Name" },
-      ],
+      storyIds: [] as string[],
     },
   },
   {
@@ -234,36 +386,9 @@ const SECTIONS: { key: string; order: number; data: unknown }[] = [
     data: {
       heading: { title: "Resources" },
       tabs: [
-        {
-          id: "case-studies",
-          label: "Case Studies",
-          cta: { label: "Read All Case Studies", href: "/case-studies" },
-          articles: [
-            { id: "art_001", published: true, slug: "solenoid-valve-classification", title: "Solenoid Valve Classification: The Engineering Logic Behind Reliable Automation Systems", image: { src: "https://cdn.rotex.com/resources/solenoid-valve-classification.jpg", alt: "Solenoid valve classification" } },
-            { id: "art_002", published: true, slug: "future-industrial-valves", title: "Future of Industrial Valves: 7 Rotex Technologies Improving Reliability & Uptime", image: { src: "https://cdn.rotex.com/resources/future-industrial-valves.jpg", alt: "Industrial valves" } },
-            { id: "art_003", published: true, slug: "select-solenoid-valve", title: "How to Select the Right Solenoid Valve for Your Industrial Process?", image: { src: "https://cdn.rotex.com/resources/select-solenoid-valve.jpg", alt: "Selecting solenoid valve" } },
-          ],
-        },
-        {
-          id: "news",
-          label: "News & Updates",
-          cta: { label: "View All News", href: "/news" },
-          articles: [
-            { id: "art_004", published: true, slug: "global-expansion", title: "Rotex Expands Global Distribution Network Across 15 New Markets", image: { src: "https://cdn.rotex.com/resources/global-expansion.jpg", alt: "Global expansion" } },
-            { id: "art_005", published: true, slug: "smart-valve-controllers", title: "Rotex Launches Next-Generation Smart Valve Controllers for Industry 4.0", image: { src: "https://cdn.rotex.com/resources/smart-valve-controllers.jpg", alt: "Smart valve controllers" } },
-            { id: "art_006", published: true, slug: "sil3-certification", title: "Rotex Achieves SIL 3 Certification for Critical Safety Systems", image: { src: "https://cdn.rotex.com/resources/sil3-certification.jpg", alt: "SIL 3 certification" } },
-          ],
-        },
-        {
-          id: "blogs",
-          label: "Blogs",
-          cta: { label: "Read All Blogs", href: "/blog" },
-          articles: [
-            { id: "art_007", published: true, slug: "valve-maintenance-signs", title: "5 Signs Your Industrial Valve Needs Immediate Maintenance", image: { src: "https://cdn.rotex.com/resources/valve-maintenance-signs.jpg", alt: "Valve maintenance" } },
-            { id: "art_008", published: true, slug: "valve-actuators-guide", title: "Understanding Valve Actuators: A Comprehensive Guide for Engineers", image: { src: "https://cdn.rotex.com/resources/valve-actuators-guide.jpg", alt: "Valve actuators" } },
-            { id: "art_009", published: true, slug: "flow-control-oil-gas", title: "Flow Control in the Oil & Gas Industry: Challenges and Solutions", image: { src: "https://cdn.rotex.com/resources/flow-control-oil-gas.jpg", alt: "Flow control oil and gas" } },
-          ],
-        },
+        { id: "case-studies", label: "Case Studies", cta: { label: "Read All Case Studies", href: "/case-studies" }, resourceIds: [] as string[] },
+        { id: "news", label: "News & Updates", cta: { label: "View All News", href: "/news" }, resourceIds: [] as string[] },
+        { id: "blogs", label: "Blogs", cta: { label: "Read All Blogs", href: "/blog" }, resourceIds: [] as string[] },
       ],
     },
   },
@@ -306,6 +431,71 @@ async function main() {
       update: { order: section.order, data: section.data as never },
       create: { key: section.key, order: section.order, enabled: true, data: section.data as never },
     });
+  }
+
+  for (const resource of RESOURCES) {
+    await prisma.resource.upsert({
+      where: { type_slug: { type: resource.type, slug: resource.slug } },
+      update: { title: resource.title, image: resource.image },
+      create: { ...resource, published: true },
+    });
+  }
+
+  // Default the home page's resources picker's tabs to the resources seeded above,
+  // so each tab isn't empty out of the box (admin can still adjust the selection).
+  const seededResources = await prisma.resource.findMany({
+    where: { type: { in: RESOURCES.map((r) => r.type) } },
+    select: { id: true, type: true },
+  });
+  const resourcesSection = await prisma.homeSection.findUnique({ where: { key: "resources" } });
+  const resourcesData = resourcesSection?.data as
+    | { heading: unknown; tabs: { id: string; label: string; cta: unknown; resourceIds?: string[] }[] }
+    | undefined;
+  if (resourcesData) {
+    const tabs = resourcesData.tabs.map((tab) => ({
+      ...tab,
+      resourceIds: seededResources.filter((r) => r.type === tab.id).map((r) => r.id),
+    }));
+    await prisma.homeSection.update({
+      where: { key: "resources" },
+      data: { data: { ...resourcesData, tabs } as never },
+    });
+  }
+
+  // Default the home page's customer-stories picker to a handful of existing stories,
+  // so the section isn't empty out of the box (admin can still adjust the selection).
+  const existingStories = await prisma.customerStory.findMany({
+    where: { published: true },
+    select: { id: true },
+    take: 12,
+  });
+  if (existingStories.length > 0) {
+    const current = await prisma.homeSection.findUnique({ where: { key: "customer-stories" } });
+    const currentData = current?.data as { heading: unknown; storyIds?: string[] } | undefined;
+    if (currentData) {
+      await prisma.homeSection.update({
+        where: { key: "customer-stories" },
+        data: { data: { ...currentData, storyIds: existingStories.map((s) => s.id) } as never },
+      });
+    }
+  }
+
+  // Default the footer's "Industries" column to every existing industry.
+  const existingIndustries = await prisma.industry.findMany({ select: { id: true } });
+  if (existingIndustries.length > 0) {
+    const globalRecord = await prisma.globalConfig.findUnique({ where: { id: "global" } });
+    const globalData = globalRecord?.data as PrismaJson.GlobalConfigData | undefined;
+    if (globalData) {
+      const columns = globalData.footer.columns.map((col) =>
+        col.id === "col_002"
+          ? { ...col, source: { type: "industries" as const, selectedIds: existingIndustries.map((i) => i.id) } }
+          : col
+      );
+      await prisma.globalConfig.update({
+        where: { id: "global" },
+        data: { data: { ...globalData, footer: { ...globalData.footer, columns } } as never },
+      });
+    }
   }
 
   console.log(`Seeded global config, home SEO, ${PARTNERS.length} partners, and ${SECTIONS.length} home sections.`);

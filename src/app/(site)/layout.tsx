@@ -4,6 +4,7 @@ import "../globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { PageLoader } from "@/components/ui/page-loader";
+import { getResolvedGlobalConfig } from "@/lib/global-config";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -16,14 +17,16 @@ export const metadata: Metadata = {
   description: "Leading provider of industrial rotary solutions and equipment",
 };
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const config = await getResolvedGlobalConfig();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${montserrat.variable} font-montserrat`} suppressHydrationWarning>
         <PageLoader />
-        <Navbar />
+        <Navbar config={config} />
         <main>{children}</main>
-        <Footer />
+        <Footer config={config} />
       </body>
     </html>
   );

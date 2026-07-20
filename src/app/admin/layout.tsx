@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "../globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -15,9 +16,11 @@ export const metadata: Metadata = {
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className={`${montserrat.variable} min-h-screen bg-background font-montserrat text-foreground`} suppressHydrationWarning>
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem storageKey="rotex-admin-theme">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

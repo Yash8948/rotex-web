@@ -14,19 +14,82 @@ declare global {
       cards: { title: string; description: string }[];
     };
 
-    type NavLink = { id: string; label: string; href: string };
     type FooterLink = { label: string; href: string };
+
+    type MegaMenuSubItem = { label: string; description: string; href: string };
+    type MegaMenuCategory = {
+      label: string;
+      items: MegaMenuSubItem[];
+      viewAllLabel?: string;
+      viewAllHref?: string;
+    };
+    type CategorySwitcherMenu = {
+      type: "category-switcher";
+      categories: MegaMenuCategory[];
+      cta: { text: string; href: string };
+    };
+
+    type FlatItem = { label: string; href: string };
+    type FlatGroup = {
+      heading: string;
+      href?: string;
+      description?: string;
+      image?: string;
+      items?: FlatItem[];
+      itemColumns?: FlatItem[][];
+    };
+    type FlatColumn = { groups: FlatGroup[]; className?: string };
+    type FlatMenu = {
+      type: "flat";
+      columns: FlatColumn[];
+      image?: string;
+      imageCaption?: string;
+      cta?: { text: string; href: string };
+    };
+
+    type MegaMenuConfig = CategorySwitcherMenu | FlatMenu;
+
+    type MegaMenuSource = {
+      type: "industries" | "products";
+      selectedIds: string[];
+      cta?: { text: string; href: string };
+      image?: string;
+      imageCaption?: string;
+    };
+
+    type NavItem = {
+      id: string;
+      label: string;
+      href: string;
+      enabled: boolean;
+      megaMenu?: MegaMenuConfig | null;
+      megaMenuSource?: MegaMenuSource | null;
+    };
+
+    type FooterColumnSource = { type: "industries"; selectedIds: string[] };
+    type FooterColumn = {
+      id: string;
+      heading: string;
+      enabled: boolean;
+      links: FooterLink[];
+      source?: FooterColumnSource | null;
+    };
 
     type GlobalConfigData = {
       logo: { src: string; alt: string; href: string };
-      header: { nav: NavLink[]; cta: { label: string; href: string } };
+      header: { nav: NavItem[]; cta: { label: string; href: string } };
       footer: {
         tagline: string;
-        columns: { id: string; heading: string; links: FooterLink[] }[];
+        columns: FooterColumn[];
         social: { id: string; platform: string; href: string }[];
         legal: { copyright: string; links: FooterLink[] };
         contact: { email: string; phone: string; address: string };
       };
+    };
+
+    type AdminConfigData = {
+      sidebarLogoLight: string;
+      sidebarLogoDark: string;
     };
 
     type HomeSeoData = {

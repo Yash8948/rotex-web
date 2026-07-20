@@ -11,10 +11,43 @@ export async function getHomeSection(key: string) {
 
   const data = section.data as Record<string, unknown>;
 
-  if (key === "partners") {
+  if (key === "partners" || key === "certifications") {
     const partners = await getSelectedPartners((data.partnerIds as string[]) ?? []);
     const logos = partners.map((p) => ({ id: p.id, src: p.logo, alt: p.name }));
-    return apiSuccess({ enabled: section.enabled, title: data.title, logos }, section.updatedAt);
+    return apiSuccess(
+      { enabled: section.enabled, title: data.title, description: data.description, logos },
+      section.updatedAt
+    );
+  }
+
+  if (key === "customer-stories") {
+    const storyIds = (data.storyIds as string[]) ?? [];
+    const stories = storyIds.length
+      ? await prisma.customerStory.findMany({
+          where: { id: { in: storyIds }, published: true },
+          orderBy: { createdAt: "asc" },
+        })
+      : [];
+    return apiSuccess(
+      { enabled: section.enabled, heading: data.heading, stories },
+      section.updatedAt
+    );
+  }
+
+  if (key === "resources") {
+    const tabs = (data.tabs as { id: string; label: string; cta: { label: string; href: string }; resourceIds?: string[] }[]) ?? [];
+    const resolvedTabs = await Promise.all(
+      tabs.map(async (tab) => {
+        const ids = tab.resourceIds ?? [];
+        const resources = ids.length
+          ? await prisma.resource.findMany({ where: { id: { in: ids }, published: true } })
+          : [];
+        const byId = new Map(resources.map((r) => [r.id, r]));
+        const ordered = ids.map((id) => byId.get(id)).filter((r): r is NonNullable<typeof r> => Boolean(r));
+        return { id: tab.id, label: tab.label, cta: tab.cta, resources: ordered };
+      })
+    );
+    return apiSuccess({ enabled: section.enabled, heading: data.heading, tabs: resolvedTabs }, section.updatedAt);
   }
 
   return apiSuccess({ enabled: section.enabled, ...data }, section.updatedAt);

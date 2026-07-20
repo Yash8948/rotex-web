@@ -146,6 +146,13 @@ model HomeSeo {
   updatedAt DateTime @updatedAt
 }
 
+model AdminConfig {
+  id        String   @id @default("admin")
+  /// [AdminConfigData]
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
 model HomeSection {
   key       String   @id
   enabled   Boolean  @default(true)
@@ -163,6 +170,19 @@ model CustomerStory {
   published Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Resource {
+  id        String   @id @default(cuid())
+  type      String
+  title     String
+  slug      String
+  image     String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, slug])
 }
 
 model Enquiry {
