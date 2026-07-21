@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "kill -9 $(lsof -t -i:5007) 2>/dev/null; next start -p 5007",
     "lint": "eslint",
     "import:products": "tsx scripts/import-products.ts"
   },
@@ -55,7 +55,7 @@
     "prisma-json-types-generator": "^5.1.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.0",
-    "typescript": "7.0.2"
+    "typescript": "6.0.3"
   },
   "ignoreScripts": [
     "sharp",
