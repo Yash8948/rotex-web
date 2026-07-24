@@ -8,6 +8,7 @@ import { TrustedCountriesBanner } from "@/components/sections/trusted-countries-
 import { ZeroDowntimeCtaSection } from "@/components/sections/zero-downtime-cta-section";
 import { GrowWithRotexSection } from "@/components/sections/grow-with-rotex-section";
 import { AchievementsSection } from "@/components/sections/achievements-section";
+import { GallerySwiperSection } from "@/components/sections/gallery-swiper-section";
 import { AboutCaseStudiesSection } from "@/components/sections/about-case-studies-section";
 
 export default function AboutPage() {
@@ -40,6 +41,8 @@ export default function AboutPage() {
       <GrowWithRotexSection />
 
       <AchievementsSection />
+
+      <GallerySwiperSection />
 
       <AboutCaseStudiesSection />
     </>

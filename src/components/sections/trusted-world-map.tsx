@@ -1,5 +1,6 @@
 "use client";
-import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
+import { memo } from "react";
+import { ComposableMap, Geographies, Geography, Marker, Sphere } from "react-simple-maps";
 
 type Pin = { name: string; coordinates: [number, number] };
 
@@ -14,13 +15,19 @@ const pins: Pin[] = [
   { name: "Malaysia", coordinates: [101.98, 4.21] },
 ];
 
-export default function TrustedWorldMap() {
+type TrustedWorldMapProps = {
+  rotateLng?: number;
+  rotateLat?: number;
+};
+
+function TrustedWorldMap({ rotateLng = -55, rotateLat = -18 }: TrustedWorldMapProps) {
   return (
     <ComposableMap
       projection="geoOrthographic"
-      projectionConfig={{ scale: 480, rotate: [-55, -18, 0] }}
+      projectionConfig={{ scale: 480, rotate: [rotateLng, rotateLat, 0] }}
       className="w-full h-full"
     >
+      <Sphere id="globe-sphere" fill="#F5F5F6" stroke="none" strokeWidth={0} />
       <Geographies geography={GEO_URL}>
         {({ geographies }) =>
           geographies.map((geo) => (
@@ -55,3 +62,5 @@ export default function TrustedWorldMap() {
     </ComposableMap>
   );
 }
+
+export default memo(TrustedWorldMap);
